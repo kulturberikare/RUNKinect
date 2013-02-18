@@ -1,0 +1,13 @@
+c:\users\johan\documents\visual studio 2012\Projects\Imagedata\Imagedata\bin\Debug\Imagedata.exe.config
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\Imagedata.csprojResolveAssemblyReference.cache
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\MainWindow.baml
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\MainWindow.g.cs
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\App.g.cs
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\Imagedata_MarkupCompile.cache
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\Imagedata.g.resources
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\Imagedata.Properties.Resources.resources
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\Imagedata.csproj.GenerateResource.Cache
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\bin\Debug\Imagedata.exe
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\bin\Debug\Imagedata.pdb
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\Imagedata.exe
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\Imagedata\Imagedata\obj\Debug\Imagedata.pdb

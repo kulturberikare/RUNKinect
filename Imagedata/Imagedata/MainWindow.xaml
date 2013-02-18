@@ -1,0 +1,14 @@
+﻿<Window x:Class="Imagedata.MainWindow"    
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height = "480" Width = "640">
+    <Grid>
+        <Image x:Name="VideoStreamElement"/>
+        
+        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="79" Width="165" Margin="0,0,22,0">
+            <Button Content="Take Picture" Click="TakePictureButton_Click"/>
+            <Button Content="Move up" Click="MoveUp_Click"/>
+            <Button Content="Move down" Click="MoveDown_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
