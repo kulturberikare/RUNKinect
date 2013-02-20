@@ -98,7 +98,7 @@ namespace Imagedata
 
                         if (this.Kinect == null)
                         {
-                            //Notify the user that the sensor is dissconnected
+                            MessageBox.Show("The sensor is dissconnected!");
                         }
                     }
                     break;
@@ -129,10 +129,10 @@ namespace Imagedata
                         //pixelData[i + 1]    = (byte)~pixelData[i + 1];
                         //pixelData[i + 2]    = (byte)~pixelData[i + 2];
 
-                        ////Apocalyptic Zombie
-                        //pixelData[i] = pixelData[i + 1];
-                        //pixelData[i + 1] = pixelData[i];
-                        //pixelData[i + 2] = (byte)~pixelData[i + 2];
+                        //Apocalyptic Zombie
+                        pixelData[i] = pixelData[i + 1];
+                        pixelData[i + 1] = pixelData[i];
+                        pixelData[i + 2] = (byte)~pixelData[i + 2];
 
                         ////Gray Scale
                         //byte gray = Math.Max(pixelData[i], pixelData[i + 1]);
@@ -157,33 +157,33 @@ namespace Imagedata
                         //pixelData[i + 1] = (byte)(pixelData[i + 1] + desaturation * (gray - pixelData[i + 1]));
                         //pixelData[i + 2] = (byte)(pixelData[i + 2] + desaturation * (gray - pixelData[i + 2]));
 
-                        //High saturation
-                        if (pixelData[i] < 0x33 || pixelData[i] > 0xE5)
-                        {
-                            pixelData[i] = 0x00;
-                        }
-                        else
-                        {
-                            pixelData[i] = 0xFF;
-                        }
+                        ////High saturation
+                        //if (pixelData[i] < 0x33 || pixelData[i] > 0xE5)
+                        //{
+                        //    pixelData[i] = 0x00;
+                        //}
+                        //else
+                        //{
+                        //    pixelData[i] = 0xFF;
+                        //}
 
-                        if (pixelData[i + 1] < 0x33 || pixelData[i + 1] > 0xE5)
-                        {
-                            pixelData[i + 1] = 0x00;
-                        }
-                        else
-                        {
-                            pixelData[i + 1] = 0xFF;
-                        }
+                        //if (pixelData[i + 1] < 0x33 || pixelData[i + 1] > 0xE5)
+                        //{
+                        //    pixelData[i + 1] = 0x00;
+                        //}
+                        //else
+                        //{
+                        //    pixelData[i + 1] = 0xFF;
+                        //}
 
-                        if (pixelData[i + 2] < 0x33 || pixelData[i + 2] > 0xE5)
-                        {
-                            pixelData[i + 2] = 0x00;
-                        }
-                        else
-                        {
-                            pixelData[i + 2] = 0xFF;
-                        }
+                        //if (pixelData[i + 2] < 0x33 || pixelData[i + 2] > 0xE5)
+                        //{
+                        //    pixelData[i + 2] = 0x00;
+                        //}
+                        //else
+                        //{
+                        //    pixelData[i + 2] = 0xFF;
+                        //}
                     }
 
 
