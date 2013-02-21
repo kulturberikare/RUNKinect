@@ -92,7 +92,7 @@ namespace PollingImageDataJT
         {
             if (this._Kinect == null)
             {
-                //Display a message to plug-in a Kinect.
+                MessageBox.Show("Plug me in!");
             }
             else
                 try
