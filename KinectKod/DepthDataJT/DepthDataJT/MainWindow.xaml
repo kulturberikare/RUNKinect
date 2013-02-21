@@ -3,6 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <Image x:Name="DepthImage"/>
+        <StackPanel>
+            <TextBlock x:Name="PixelDepth" FontSize="48" HorizontalAlignment="Left"/>
+            <Image x:Name="DepthImage" Width="640" Height="480"/>
+        </StackPanel>
     </Grid>
 </Window>

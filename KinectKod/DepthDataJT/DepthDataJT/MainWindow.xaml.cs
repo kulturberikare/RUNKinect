@@ -26,6 +26,11 @@ namespace DepthDataJT
 
         #region Members Variables
         private KinectSensor _Kinect;
+        private DepthImageFrame _LastDepthFrame;
+        private WriteableBitmap _RawDepthImage;
+        private Int32Rect _RawDepthImageRect;
+        private int _RawDepthImageStride;
+        private short[] _DepthImagePixelData;
         #endregion Members Variables
 
         #region Constructor
@@ -71,25 +76,45 @@ namespace DepthDataJT
                     }
                     break;
 
-                // In case of more statuschanges, add here.
+                // In case of more statuschanges, add here:
             }
         }
 
         private void Kinect_DepthFrameReady(object sender, DepthImageFrameReadyEventArgs e)
         {
-            using (DepthImageFrame frame = e.OpenDepthImageFrame())
+            if (this._LastDepthFrame != null)
             {
-                if (frame != null)
-                {
-                    short[] pixelData = new short[frame.PixelDataLength];
-                    frame.CopyPixelDataTo(pixelData);
-                    int stride = frame.Width * frame.BytesPerPixel;
-                    DepthImage.Source = BitmapSource.Create(frame.Width, frame.Height, 96, 96,
-                                                            PixelFormats.Gray16, null,
-                                                            pixelData, stride);
-                }
+                this._LastDepthFrame.Dispose();
+                this._LastDepthFrame = null;
+            }
+
+            this._LastDepthFrame = e.OpenDepthImageFrame();
+
+            if (this._LastDepthFrame != null)
+            {
+                this._LastDepthFrame.CopyPixelDataTo(this._DepthImagePixelData);
+                this._RawDepthImage.WritePixels(this._RawDepthImageRect, this._DepthImagePixelData,
+                                                               this._RawDepthImageStride, 0);
             }
         }
+
+        private void DepthImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Point p = e.GetPosition(DepthImage);
+
+            if (this._DepthImagePixelData != null && this._DepthImagePixelData.Length > 0)
+            {
+                int pixelIndex  = (int)(p.X + ((int)p.Y * this._LastDepthFrame.Width));
+                int depth       = this._DepthImagePixelData[pixelIndex] >>
+                                 DepthImageFrame.PlayerIndexBitmaskWidth;
+                int depthInches = (int)(depth * 0.0393700787);
+                int depthFt     = depthInches / 12;
+                depthInches     = depthInches % 12;
+
+                PixelDepth.Text = string.Format("{0}mm ~ {1]'{2}\"", depth, depthFt, depthInches);
+            }
+        }
+
 
         #endregion Methods
 
@@ -107,7 +132,7 @@ namespace DepthDataJT
                 {
                     if (this._Kinect != null)
                     {
-                        //Unitialize
+                        UninitializeKinectSensor(this.Kinect);
                         this._Kinect = null;
                     }
 
@@ -124,7 +149,16 @@ namespace DepthDataJT
         {
             if (sensor != null)
             {
-                sensor.DepthStream.Enable();
+                DepthImageStream depthStream = sensor.DepthStream;
+                depthStream.Enable();
+                this._RawDepthImage = new WriteableBitmap(depthStream.FrameWidth,
+                                                          depthStream.FrameHeight, 96, 96,
+                                                          PixelFormats.Bgr32, null);
+                this._RawDepthImageRect = new Int32Rect(0, 0, depthStream.FrameWidth,
+                                                        depthStream.FrameHeight);
+                this._RawDepthImageStride = depthStream.FrameWidth * depthStream.FrameBytesPerPixel;
+                DepthImage.Source = this._RawDepthImage;
+                this._DepthImagePixelData = new short[depthStream.FramePixelDataLength];
                 sensor.DepthFrameReady += Kinect_DepthFrameReady;
                 sensor.Start();
             }
