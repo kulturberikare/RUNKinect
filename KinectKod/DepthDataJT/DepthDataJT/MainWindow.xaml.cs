@@ -74,6 +74,23 @@ namespace DepthDataJT
                 // In case of more statuschanges, add here.
             }
         }
+
+        private void Kinect_DepthFrameReady(object sender, DepthImageFrameReadyEventArgs e)
+        {
+            using (DepthImageFrame frame = e.OpenDepthImageFrame())
+            {
+                if (frame != null)
+                {
+                    short[] pixelData = new short[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(pixelData);
+                    int stride = frame.Width * frame.BytesPerPixel;
+                    DepthImage.Source = BitmapSource.Create(frame.Width, frame.Height, 96, 96,
+                                                            PixelFormats.Gray16, null,
+                                                            pixelData, stride);
+                }
+            }
+        }
+
         #endregion Methods
 
         #region Properties
@@ -93,15 +110,35 @@ namespace DepthDataJT
                         //Unitialize
                         this._Kinect = null;
                     }
-                    
-                    if(value != null && value.Status == KinectStatus.Connected)
+
+                    if (value != null && value.Status == KinectStatus.Connected)
                     {
                         this._Kinect = value;
-                        //Initialize
+                        InitializeKinectSensor(this.Kinect);
                     }
                 }
             }
         }
+
+        private void InitializeKinectSensor(KinectSensor sensor)
+        {
+            if (sensor != null)
+            {
+                sensor.DepthStream.Enable();
+                sensor.DepthFrameReady += Kinect_DepthFrameReady;
+                sensor.Start();
+            }
+        }
+
+        private void UninitializeKinectSensor(KinectSensor sensor)
+        {
+            if (sensor != null)
+            {
+                sensor.Stop();
+                sensor.DepthFrameReady -= Kinect_DepthFrameReady;
+            }
+        }
+
         #endregion Properties
     }
 }
