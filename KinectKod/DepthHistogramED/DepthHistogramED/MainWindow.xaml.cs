@@ -26,6 +26,11 @@ namespace DepthHistogramED
         private KinectSensor _Kinect;
         //private DepthImageFrame _LastDepthFrame;
         private short[] _DepthPixelData;
+        private WriteableBitmap _DepthImage;
+        private Int32Rect _DepthImageRect;
+        private const int LoDepthThreshold = 1220;
+        private const int HiDepthThreshold = 3048;
+        private int _DepthImageStride;
         #endregion Member Variables
 
         #region Constructor
@@ -83,6 +88,13 @@ namespace DepthHistogramED
             if (sensor != null)
             {
                 DepthImageStream depthStream = sensor.DepthStream;
+                this._DepthPixelData = new short[depthStream.FramePixelDataLength];
+
+                this._DepthImage = new WriteableBitmap(depthStream.FrameWidth, depthStream.FrameHeight, 96, 96, PixelFormats.Bgr32, null);
+                this._DepthImageRect = new Int32Rect(0, 0, (int)Math.Ceiling(this._DepthImage.Width), (int)Math.Ceiling(this._DepthImage.Height));
+                this._DepthImageStride = depthStream.FrameWidth * 4;
+                this._DepthPixelData = new short[depthStream.FramePixelDataLength];
+                this.DepthImage.Source = this._DepthImage; 
 
                 depthStream.Enable();
 
@@ -118,8 +130,6 @@ namespace DepthHistogramED
         {
             int depth;
             int gray;
-            int loThreshold = 1220;
-            int hiThreshold = 3048;
             int bytesPerPixel = 4;
             byte[] enhPixelData = new byte[depthFrame.Width * depthFrame.Height * bytesPerPixel];
 
@@ -127,7 +137,7 @@ namespace DepthHistogramED
             {
                 depth = pixelData[i] >> DepthImageFrame.PlayerIndexBitmaskWidth;
 
-                if (depth < loThreshold || depth > hiThreshold)
+                if (depth < LoDepthThreshold || depth > HiDepthThreshold)
                 {
                     gray = 0xFF;
                 }
@@ -140,6 +150,8 @@ namespace DepthHistogramED
                 enhPixelData[j + 1] = (byte)gray;
                 enhPixelData[j + 2] = (byte)gray;
             }
+
+            this._DepthImage.WritePixels(this._DepthImageRect, enhPixelData, this._DepthImageStride, 0);
         }
 
         private void CreateDepthHistogram(DepthImageFrame depthFrame, short[] pixelData)
@@ -151,11 +163,11 @@ namespace DepthHistogramED
 
             DepthHistogram.Children.Clear();
 
-            for (int i = 0; i < pixelData.Length; i += depthFrame.BytesPerPixel)
+            for (int i = 0; i < pixelData.Length; i++)  //= depthFrame.BytesPerPixel)
             {
                 depth = pixelData[i] >> DepthImageFrame.PlayerIndexBitmaskWidth;
 
-                if (depth != 0)
+                if (depth >= LoDepthThreshold && depth <= HiDepthThreshold)
                 {
                     depths[depth]++;
                 }
@@ -168,14 +180,16 @@ namespace DepthHistogramED
 
             for (int i = 0; i < depths.Length; i++)
             {
-                Rectangle r = new Rectangle();
-                r.Fill = Brushes.Black;
-                r.Width = chartBarWidth;
-                r.Height = DepthHistogram.ActualHeight *
-                           (depths[i] / (double)maxValue);
-                r.Margin = new Thickness(1, 0, 1, 0);
-                r.VerticalAlignment = System.Windows.VerticalAlignment.Bottom;
-                DepthHistogram.Children.Add(r);
+                if (depths[i] > 0)
+                {
+                    Rectangle r         = new Rectangle();
+                    r.Fill              = Brushes.Black;
+                    r.Width             = chartBarWidth;
+                    r.Height            = DepthHistogram.ActualHeight * (depths[i] / (double)maxValue);
+                    r.Margin            = new Thickness(1, 0, 1, 0);
+                    r.VerticalAlignment = System.Windows.VerticalAlignment.Bottom;
+                    DepthHistogram.Children.Add(r);
+                }
             }
         }
         #endregion Methods
