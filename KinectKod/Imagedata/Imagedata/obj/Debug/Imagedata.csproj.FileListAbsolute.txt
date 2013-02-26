@@ -1,1 +1,10 @@
 C:\Users\Kandidat\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\bin\Debug\Imagedata.exe.config
+C:\Users\MED1\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\bin\Debug\Imagedata.exe.config
+C:\Users\MED1\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\obj\Debug\Imagedata.csprojResolveAssemblyReference.cache
+C:\Users\MED1\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\obj\Debug\MainWindow.baml
+C:\Users\MED1\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\obj\Debug\MainWindow.g.cs
+C:\Users\MED1\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\obj\Debug\App.g.cs
+C:\Users\MED1\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\obj\Debug\Imagedata_MarkupCompile.cache
+C:\Users\MED1\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\obj\Debug\Imagedata.g.resources
+C:\Users\MED1\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\obj\Debug\Imagedata.Properties.Resources.resources
+C:\Users\MED1\Documents\GitHub\RUNKinect\KinectKod\Imagedata\Imagedata\obj\Debug\Imagedata.csproj.GenerateResource.Cache
