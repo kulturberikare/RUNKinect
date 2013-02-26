@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 using Microsoft.Kinect;
 
-namespace DepthHistogramED
+namespace DepthPlayerIndexingAB
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -24,13 +24,14 @@ namespace DepthHistogramED
     {
         #region Member Variables
         private KinectSensor _Kinect;
-        //private DepthImageFrame _LastDepthFrame;
-        private short[] _DepthPixelData;
-        private WriteableBitmap _DepthImage;
-        private Int32Rect _DepthImageRect;
-        private const int LoDepthThreshold = 1220;
-        private const int HiDepthThreshold = 3048;
-        private int _DepthImageStride;
+        private WriteableBitmap _RawDepthImage;
+        private Int32Rect _RawDepthImageRect;
+        private short[] _RawDepthPixelData;
+        private int _RawDepthImageStride;
+        private WriteableBitmap _EnhDepthImage;
+        private Int32Rect _EnhDepthImageRect;
+        private short[] _EnhDepthPixelData;
+        private int _EnhDepthImageStride;
         #endregion Member Variables
 
         #region Constructor
@@ -87,14 +88,21 @@ namespace DepthHistogramED
         {
             if (sensor != null)
             {
-                DepthImageStream depthStream = sensor.DepthStream;
-                this._DepthPixelData = new short[depthStream.FramePixelDataLength];
+                this._Kinect.SkeletonStream.Enable();
+                this._Kinect.DepthStream.Enable();   
 
-                this._DepthImage = new WriteableBitmap(depthStream.FrameWidth, depthStream.FrameHeight, 96, 96, PixelFormats.Bgr32, null);
-                this._DepthImageRect = new Int32Rect(0, 0, (int)Math.Ceiling(this._DepthImage.Width), (int)Math.Ceiling(this._DepthImage.Height));
-                this._DepthImageStride = depthStream.FrameWidth * 4;
-                this._DepthPixelData = new short[depthStream.FramePixelDataLength];
-                this.DepthImage.Source = this._DepthImage; 
+                DepthImageStream depthStream = this._Kinect.DepthStream;
+                this._RawDepthImage = new WriteableBitmap(depthStream.FrameWidth, depthStream.FrameHeight, 96, 96, PixelFormats.Gray16, null);
+                this._RawDepthImageRect = new Int32Rect(0, 0, (int)Math.Ceiling(this._RawDepthImage.Width), (int)Math.Ceiling(this._RawDepthImage.Height));
+                this._RawDepthImageStride = depthStream.FrameWidth * depthStream.FrameBytesPerPixel;
+                this._RawDepthPixelData = new short[depthStream.FramePixelDataLength];
+                this.RawDepthImage.Source = this._RawDepthImage;
+
+                this._EnhDepthImage = new WriteableBitmap(depthStream.FrameWidth, depthStream.FrameHeight, 96, 96, PixelFormats.Bgr32, null);
+                this._EnhDepthImageRect = new Int32Rect(0, 0, (int)Math.Ceiling(this._EnhDepthImage.Width), (int)Math.Ceiling(this._EnhDepthImage.Height));
+                this._EnhDepthImageStride = depthStream.FrameWidth * 4;
+                this._EnhDepthPixelData = new short[depthStream.FramePixelDataLength];
+                this.EnhDepthImage.Source = this._EnhDepthImage;      
 
                 depthStream.Enable();
 
@@ -119,78 +127,40 @@ namespace DepthHistogramED
             {
                 if (frame != null)
                 {
-                    frame.CopyPixelDataTo(this._DepthPixelData);
-                    CreateBetterShadesOfGray(frame, this._DepthPixelData);
-                    CreateDepthHistogram(frame, this._DepthPixelData);
+                    frame.CopyPixelDataTo(this._RawDepthPixelData);
+                    this._RawDepthImage.WritePixels(this._RawDepthImageRect, this._RawDepthPixelData,
+                                                    this._RawDepthImageStride, 0);
+                    CreatePlayerDepthImage(frame, this._RawDepthPixelData);
                 }
             }
         }
 
-        private void CreateBetterShadesOfGray(DepthImageFrame depthFrame, short[] pixelData)
+        private void CreatePlayerDepthImage(DepthImageFrame depthFrame, short[] pixelData)
         {
-            int depth;
-            int gray;
-            int bytesPerPixel = 4;
-            byte[] enhPixelData = new byte[depthFrame.Width * depthFrame.Height * bytesPerPixel];
+            int playerIndex;
+            int depthBytePerPixel = 4;
+            byte[] enhPixelData = new byte[depthFrame.Height * this._EnhDepthImageStride];
 
-            for (int i = 0, j = 0; i < pixelData.Length; i++, j += bytesPerPixel)
+            for (int i = 0, j = 0; i < pixelData.Length; i++, j += depthBytePerPixel)
             {
-                depth = pixelData[i] >> DepthImageFrame.PlayerIndexBitmaskWidth;
+                playerIndex = pixelData[i] & DepthImageFrame.PlayerIndexBitmask;
 
-                if (depth < LoDepthThreshold || depth > HiDepthThreshold)
+                if (playerIndex == 0)
                 {
-                    gray = 0xFF;
+                    enhPixelData[j] = 0xFF;
+                    enhPixelData[j + 1] = 0xFF;
+                    enhPixelData[j + 2] = 0xFF;
                 }
                 else
                 {
-                    gray = (255 * depth / 0xFFF);
-                }
-
-                enhPixelData[j] = (byte)gray;
-                enhPixelData[j + 1] = (byte)gray;
-                enhPixelData[j + 2] = (byte)gray;
-            }
-
-            this._DepthImage.WritePixels(this._DepthImageRect, enhPixelData, this._DepthImageStride, 0);
-        }
-
-        private void CreateDepthHistogram(DepthImageFrame depthFrame, short[] pixelData)
-        {
-            int depth;
-            int[] depths = new int[4096];
-            int maxValue = 0;
-            double chartBarWidth = DepthHistogram.ActualWidth / depths.Length;
-
-            DepthHistogram.Children.Clear();
-
-            for (int i = 0; i < pixelData.Length; i++)  //= depthFrame.BytesPerPixel)
-            {
-                depth = pixelData[i] >> DepthImageFrame.PlayerIndexBitmaskWidth;
-
-                if (depth >= LoDepthThreshold && depth <= HiDepthThreshold)
-                {
-                    depths[depth]++;
+                    enhPixelData[j] = 0x00;
+                    enhPixelData[j + 1] = 0x00;
+                    enhPixelData[j + 2] = 0x00;
                 }
             }
 
-            for (int i = 0; i < depths.Length; i++)
-            {
-                maxValue = Math.Max(maxValue, depths[i]);
-            }
-
-            for (int i = 0; i < depths.Length; i++)
-            {
-                if (depths[i] > 0)
-                {
-                    Rectangle r         = new Rectangle();
-                    r.Fill              = Brushes.Black;
-                    r.Width             = chartBarWidth;
-                    r.Height            = DepthHistogram.ActualHeight * (depths[i] / (double)maxValue);
-                    r.Margin            = new Thickness(1, 0, 1, 0);
-                    r.VerticalAlignment = System.Windows.VerticalAlignment.Bottom;
-                    DepthHistogram.Children.Add(r);
-                }
-            }
+            this._EnhDepthImage.WritePixels(this._EnhDepthImageRect, enhPixelData,
+                                            this._EnhDepthImageStride, 0);
         }
         #endregion Methods
 
