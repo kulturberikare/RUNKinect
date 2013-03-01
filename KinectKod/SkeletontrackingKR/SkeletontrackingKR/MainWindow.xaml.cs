@@ -123,7 +123,7 @@ namespace SkeletontrackingKR
 
                             //Draws skeletons right arm
                             figure = CreateFigure(skeleton, userBrush, new[] {JointType.ShoulderRight, JointType.ElbowRight,
-                                                    JointType.WristLeft, JointType.HandLeft});
+                                                    JointType.WristRight, JointType.HandRight} );
                             LayoutRoot.Children.Add(figure);
                         }
                     }
