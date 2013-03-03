@@ -5,8 +5,8 @@
         Title="MainWindow" Height="600" Width="1280">
     <Grid>
         <StackPanel Orientation="Horizontal">
-            <Image x:Name="ColorImageOne" Height="480" Width="640"/>
-            <Image x:Name="ColorImageTwo" Height="480" Width="640"/>
+            <Image x:Name="DepthImageOne" Height="480" Width="640"/>
+            <Image x:Name="DepthImageTwo" Height="480" Width="640"/>
         </StackPanel>
     </Grid>
 </Window>

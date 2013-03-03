@@ -1,0 +1,13 @@
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\bin\Debug\SkeletontrackingKR.exe.config
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\bin\Debug\SkeletontrackingKR.exe
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\bin\Debug\SkeletontrackingKR.pdb
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\SkeletontrackingKR.csprojResolveAssemblyReference.cache
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\MainWindow.baml
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\MainWindow.g.cs
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\App.g.cs
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\SkeletontrackingKR_MarkupCompile.cache
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\SkeletontrackingKR.g.resources
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\SkeletontrackingKR.Properties.Resources.resources
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\SkeletontrackingKR.csproj.GenerateResource.Cache
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\SkeletontrackingKR.exe
+C:\Users\Johan\Documents\Visual Studio 2012\Projects\RUNKinect\KinectKod\SkeletontrackingKR\SkeletontrackingKR\obj\Debug\SkeletontrackingKR.pdb

@@ -25,37 +25,50 @@ namespace ThePrizeOf1For2
         #region Member Variables
         private KinectSensor _KinectOne;
         private KinectSensor _KinectTwo;
-        private WriteableBitmap _ColorImageBitmapOne;
-        private Int32Rect _ColorImageBitmapRectOne;
-        private int _ColorImageStrideOne;
-        private WriteableBitmap _ColorImageBitmapTwo;
-        private Int32Rect _ColorImageBitmapRectTwo;
-        private int _ColorImageStrideTwo;
+        private WriteableBitmap _RawDepthImageOne;
+        private WriteableBitmap _RawDepthImageTwo;
+        private Int32Rect _RawDepthImageRectOne;
+        private Int32Rect _RawDepthImageRectTwo;
+        private int _RawDepthImageStrideOne;
+        private int _RawDepthImageStrideTwo;
         #endregion Member Variables
 
         #region Constructor
         public MainWindow()
         {
             InitializeComponent();
-            this.Loaded += (s, e) => { DiscoverKinectSensors(); };
-            this.Unloaded += (s, e) => { this.KinectOne = null; this.KinectTwo = null; };
+            this.Loaded += (s, e) => { DiscoverKinectSensor(); };
+            this.Unloaded += (s, e) => { this._KinectOne = null; this._KinectTwo = null; };
         }
         #endregion Constructor
 
-        # region Methods
-        private void DiscoverKinectSensors()
+        #region Methods
+        private void DiscoverKinectSensor()
         {
             KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
-
-            if (KinectSensor.KinectSensors[0].Status == KinectStatus.Connected)
+            KinectOne = KinectSensor.KinectSensors
+                                    .FirstOrDefault(x => x.Status == KinectStatus.Connected);
+            if (KinectOne == null)
             {
-                KinectOne = KinectSensor.KinectSensors[0];
-                MessageBox.Show("Kinect1");
+                MessageBox.Show("No Kinect One Conected!");
             }
-            if (KinectSensor.KinectSensors[1].Status == KinectStatus.Connected)
+            else
             {
-                KinectTwo = KinectSensor.KinectSensors[1];
-                MessageBox.Show("Kinect2");
+                MessageBox.Show("Kinect one conected!");
+            }
+            if (KinectSensor.KinectSensors.Count >= 2
+                && KinectSensor.KinectSensors
+                               .FirstOrDefault(x => x.Status == KinectStatus.Connected)
+                != KinectSensor.KinectSensors
+                               .LastOrDefault(x => x.Status == KinectStatus.Connected))
+            {
+                KinectTwo = KinectSensor.KinectSensors
+                                        .LastOrDefault(x => x.Status == KinectStatus.Connected);
+                MessageBox.Show("Kinect two Conected!");
+            }
+            else
+            {
+                MessageBox.Show("No Kinect two conected!");
             }
         }
 
@@ -64,40 +77,61 @@ namespace ThePrizeOf1For2
             switch (e.Status)
             {
                 case KinectStatus.Connected:
-                    if (this.KinectOne == null && e.Sensor == KinectSensor.KinectSensors[0])
+                    if (this.KinectOne == null
+                        && KinectSensor.KinectSensors
+                                       .FirstOrDefault(x => x.Status == KinectStatus.Connected)
+                        != KinectSensor.KinectSensors
+                                       .LastOrDefault(x => x.Status == KinectStatus.Connected)
+                        && e.Sensor == KinectSensor.KinectSensors
+                                                   .FirstOrDefault(x => x.Status == KinectStatus.Connected))
                     {
                         this.KinectOne = e.Sensor;
+                        MessageBox.Show("Kinect one connected!");
                     }
-                    if (this.KinectTwo == null && e.Sensor == KinectSensor.KinectSensors[1])
+                    if (this.KinectTwo == null
+                        && KinectSensor.KinectSensors.Count >= 2
+                        && KinectSensor.KinectSensors
+                                       .FirstOrDefault(x => x.Status == KinectStatus.Connected)
+                        != KinectSensor.KinectSensors
+                                       .LastOrDefault(x => x.Status == KinectStatus.Connected)
+                        && e.Sensor == KinectSensor.KinectSensors
+                                                   .LastOrDefault(x => x.Status == KinectStatus.Connected)
+                        )
                     {
                         this.KinectTwo = e.Sensor;
+                        MessageBox.Show("Kinect two connected");
                     }
                     break;
                 case KinectStatus.Disconnected:
-                    if (this.KinectOne == e.Sensor && e.Sensor == KinectSensor.KinectSensors[0])
+                    if (this.KinectOne == e.Sensor)
                     {
                         this.KinectOne = null;
-                        if (KinectSensor.KinectSensors[0].Status == KinectStatus.Connected)
+                        if (KinectSensor.KinectSensors.FirstOrDefault(x => x.Status == KinectStatus.Connected)
+                            != KinectSensor.KinectSensors.LastOrDefault(x => x.Status == KinectStatus.Connected))
                         {
-                            this.KinectOne = KinectSensor.KinectSensors[0];
-                        }
+                            this.KinectOne = KinectSensor.KinectSensors
+                                                         .FirstOrDefault(x => x.Status == KinectStatus.Connected);
 
+                        }
                         if (this.KinectOne == null)
                         {
-                            MessageBox.Show("Kinect1 dissconected!");
+                            MessageBox.Show("Camera 1 dissconnected");
                         }
                     }
-                    if (this.KinectTwo == null && e.Sensor == KinectSensor.KinectSensors[1])
+                    if (this.KinectTwo == e.Sensor)
                     {
                         this.KinectTwo = null;
-                        if (KinectSensor.KinectSensors[1].Status == KinectStatus.Connected)
-                        {
-                            this.KinectTwo = KinectSensor.KinectSensors[1];
-                        }
 
+                        if (KinectSensor.KinectSensors.Count >= 2
+                            && KinectSensor.KinectSensors.FirstOrDefault(x => x.Status == KinectStatus.Connected)
+                            != KinectSensor.KinectSensors.LastOrDefault(x => x.Status == KinectStatus.Connected))
+                        {
+                            this.KinectTwo = KinectSensor.KinectSensors
+                                                         .LastOrDefault(x => x.Status == KinectStatus.Connected);
+                        }
                         if (this.KinectTwo == null)
                         {
-                            MessageBox.Show("Kinect2 dissconected!");
+                            MessageBox.Show("Camera 2 dissconnected");
                         }
                     }
                     break;
@@ -108,16 +142,19 @@ namespace ThePrizeOf1For2
         {
             if (sensor != null)
             {
-                ColorImageStream colorStream = sensor.ColorStream;
-                colorStream.Enable();
-                this._ColorImageBitmapOne = new WriteableBitmap(colorStream.FrameWidth, colorStream.FrameHeight,
-                                                                96, 96, PixelFormats.Bgr32, null);
-                this._ColorImageBitmapRectOne = new Int32Rect(0, 0, colorStream.FrameWidth, colorStream.FrameHeight);
-                this._ColorImageStrideOne = colorStream.FrameWidth * colorStream.FrameBytesPerPixel;
-                ColorImageOne.Source = this._ColorImageBitmapOne;
-                sensor.ColorFrameReady += Kinect_ColorFrameReadyOne;
+                DepthImageStream depthStream = sensor.DepthStream;
+                depthStream.Enable();
+
+                this._RawDepthImageOne = new WriteableBitmap(depthStream.FrameWidth,
+                    depthStream.FrameHeight, 96, 96,
+                    PixelFormats.Gray16, null);
+                this._RawDepthImageRectOne = new Int32Rect(0, 0, depthStream.FrameWidth,
+                    depthStream.FrameHeight);
+                this._RawDepthImageStrideOne = depthStream.FrameWidth * depthStream.FrameBytesPerPixel;
+                DepthImageOne.Source = this._RawDepthImageOne;
+
+                sensor.DepthFrameReady += Kinect_DepthFrameReadyOne;
                 sensor.Start();
-                MessageBox.Show("Started kinect1");
             }
         }
 
@@ -125,46 +162,68 @@ namespace ThePrizeOf1For2
         {
             if (sensor != null)
             {
-                ColorImageStream colorStream = sensor.ColorStream;
-                colorStream.Enable();
-                this._ColorImageBitmapTwo = new WriteableBitmap(colorStream.FrameWidth, colorStream.FrameHeight,
-                                                                96, 96, PixelFormats.Bgr32, null);
-                this._ColorImageBitmapRectTwo = new Int32Rect(0, 0, colorStream.FrameWidth, colorStream.FrameHeight);
-                this._ColorImageStrideTwo = colorStream.FrameWidth * colorStream.FrameBytesPerPixel;
-                ColorImageTwo.Source = this._ColorImageBitmapTwo;
-                sensor.ColorFrameReady += Kinect_ColorFrameReadyTwo;
+                DepthImageStream depthStream = sensor.DepthStream;
+                depthStream.Enable();
+
+                this._RawDepthImageTwo = new WriteableBitmap(depthStream.FrameWidth,
+                    depthStream.FrameHeight, 96, 96,
+                    PixelFormats.Gray16, null);
+                this._RawDepthImageRectTwo = new Int32Rect(0, 0, depthStream.FrameWidth,
+                    depthStream.FrameHeight);
+                this._RawDepthImageStrideTwo = depthStream.FrameWidth * depthStream.FrameBytesPerPixel;
+                DepthImageTwo.Source = this._RawDepthImageTwo;
+
+                sensor.DepthFrameReady += Kinect_DepthFrameReadyTwo;
                 sensor.Start();
-                MessageBox.Show("Started kinect2");
             }
         }
 
-        private void Kinect_ColorFrameReadyOne(object sender, ColorImageFrameReadyEventArgs e)
+        private void UninitializeKinectSensorOne(KinectSensor sensor)
         {
-            using (ColorImageFrame frame = e.OpenColorImageFrame())
+            if (sensor != null)
+            {
+                sensor.Stop();
+                sensor.DepthFrameReady -= Kinect_DepthFrameReadyOne;
+            }
+        }
+
+        private void UninitializeKinectSensorTwo(KinectSensor sensor)
+        {
+            if (sensor != null)
+            {
+                sensor.Stop();
+                sensor.DepthFrameReady -= Kinect_DepthFrameReadyTwo;
+            }
+        }
+
+        private void Kinect_DepthFrameReadyOne(object sender, DepthImageFrameReadyEventArgs e)
+        {
+            using (DepthImageFrame frame = e.OpenDepthImageFrame())
             {
                 if (frame != null)
                 {
-                    byte[] pixelData = new byte[frame.PixelDataLength];
+                    short[] pixelData = new short[frame.PixelDataLength];
                     frame.CopyPixelDataTo(pixelData);
-                    this._ColorImageBitmapOne.WritePixels(this._ColorImageBitmapRectOne, pixelData,
-                                                          this._ColorImageStrideOne, 0);
+                    this._RawDepthImageOne.WritePixels(this._RawDepthImageRectOne,
+                                                       pixelData, this._RawDepthImageStrideOne, 0);
                 }
             }
         }
 
-        private void Kinect_ColorFrameReadyTwo(object sender, ColorImageFrameReadyEventArgs e)
+        private void Kinect_DepthFrameReadyTwo(object sender, DepthImageFrameReadyEventArgs e)
         {
-            using (ColorImageFrame frame = e.OpenColorImageFrame())
+            using (DepthImageFrame frame = e.OpenDepthImageFrame())
             {
                 if (frame != null)
                 {
-                    byte[] pixelData = new byte[frame.PixelDataLength];
+                    short[] pixelData = new short[frame.PixelDataLength];
                     frame.CopyPixelDataTo(pixelData);
-                    this._ColorImageBitmapTwo.WritePixels(this._ColorImageBitmapRectTwo, pixelData,
-                                                          this._ColorImageStrideTwo, 0);
+                    this._RawDepthImageTwo.WritePixels(this._RawDepthImageRectTwo,
+                                                       pixelData, this._RawDepthImageStrideTwo, 0);
                 }
             }
         }
+
         #endregion Methods
 
         #region Properties
@@ -174,13 +233,14 @@ namespace ThePrizeOf1For2
             {
                 return _KinectOne;
             }
+
             set
             {
                 if (this._KinectOne != value)
                 {
                     if (this._KinectOne != null)
                     {
-                        //uninitialize Kinect sensor
+                        UninitializeKinectSensorOne(this._KinectOne);
                         this._KinectOne = null;
                     }
                     if (value != null && value.Status == KinectStatus.Connected)
@@ -198,13 +258,14 @@ namespace ThePrizeOf1For2
             {
                 return _KinectTwo;
             }
+
             set
             {
                 if (this._KinectTwo != value)
                 {
                     if (this._KinectTwo != null)
                     {
-                        //uninitialize Kinect sensor
+                        UninitializeKinectSensorTwo(this._KinectTwo);
                         this._KinectTwo = null;
                     }
                     if (value != null && value.Status == KinectStatus.Connected)
@@ -219,3 +280,4 @@ namespace ThePrizeOf1For2
         #endregion Properties
     }
 }
+
