@@ -145,7 +145,7 @@ namespace DotsOnTheDeep
         {
             Polyline figure = new Polyline();
 
-            figure.StrokeThickness = 18;
+            figure.StrokeThickness = 8;
             figure.Stroke = brush;
 
             for (int i = 0; i < joints.Length; i++)

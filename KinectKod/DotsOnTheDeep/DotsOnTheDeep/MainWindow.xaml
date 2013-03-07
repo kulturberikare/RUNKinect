@@ -6,23 +6,12 @@
         xmlns:c="clr-namespace:DotsOnTheDeep"        
         mc:Ignorable="d" 
         x:Class="DotsOnTheDeep.MainWindow"
-        Title="MainWindow" Height="600" Width="800" Background="White">
+        Title="MainWindow" Height="1200" Width="1290" Background="White">
 
     <Viewbox>
         <Grid x:Name="LayoutRoot" Width="1920" Height="1200">
-            <c:SkeletonViewer x:Name="SkeletonViewerElement"/>
-            <Polyline x:Name="CrayonElement" Stroke="Black" StrokeThickness="15"/>
-
-            <Canvas x:Name="GameBoardElement">
-                <Canvas x:Name="PuzzleBoardElement"/>
-               <!--<Image x:Name="HandCursorElement" Source="Images/hand.png" RenderTransformOrigin="0.5,0.5" Canvas.Left="134.694" Canvas.Top="355.102">-->
-                    <!--<Image.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform x:Name="HandCursorScale" ScaleX="1" ScaleY="1"/>
-                        </TransformGroup>
-                    </Image.RenderTransform>
-                </Image>-->
-            </Canvas>
+            <Image x:Name="DepthImage"/>            
+            <c:SkeletonViewer x:Name="SkeletonViewerElement"/>                      
         </Grid>
     </Viewbox>
 </Window>

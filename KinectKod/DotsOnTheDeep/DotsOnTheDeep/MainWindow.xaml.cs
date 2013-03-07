@@ -24,9 +24,12 @@ namespace DotsOnTheDeep
 
     public partial class MainWindow : Window
     {
-         #region Member Variables
+        #region Member Variables
         private KinectSensor _KinectDevice;
         private Skeleton[] _FrameSkeletons;
+        private WriteableBitmap _RawDepthImage;
+        private Int32Rect _RawDepthImageRect;
+        private int _RawDepthImageStride;
         #endregion Member Variables
 
         #region Constructor
@@ -36,11 +39,13 @@ namespace DotsOnTheDeep
             InitializeComponent();
 
 
-             this.Loaded += (s,e) =>
-            {
-                KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
-                this.KinectDevice = KinectSensor.KinectSensors.FirstOrDefault(x => x.Status == KinectStatus.Connected);
-            };
+            this.Loaded += (s, e) =>
+           {
+               KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
+               this.KinectDevice = KinectSensor.KinectSensors.FirstOrDefault(x => x.Status == KinectStatus.Connected);
+           };
+
+
         }
 
 
@@ -70,45 +75,18 @@ namespace DotsOnTheDeep
             }
         }
 
-        private void KinectDevice_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        private void Kinect_DepthFrameReady(object sender, DepthImageFrameReadyEventArgs e)
         {
-            using (SkeletonFrame frame = e.OpenSkeletonFrame())
+            using (DepthImageFrame frame = e.OpenDepthImageFrame())
             {
                 if (frame != null)
                 {
-                    frame.CopySkeletonDataTo(this._FrameSkeletons);
-                    Skeleton skeleton = GetPrimarySkeleton(this._FrameSkeletons);
+                    short[] pixelData = new short[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(pixelData);
+                    this._RawDepthImage.WritePixels(this._RawDepthImageRect,
+                                                    pixelData, this._RawDepthImageStride, 0);
                 }
             }
-        }
-
-        private static Skeleton GetPrimarySkeleton(Skeleton[] skeletons)
-        {
-            Skeleton skeleton = null;
-
-            if (skeletons != null)
-            {
-                //Find the closest skeleton       
-                for (int i = 0; i < skeletons.Length; i++)
-                {
-                    if (skeletons[i].TrackingState == SkeletonTrackingState.Tracked)
-                    {
-                        if (skeleton == null)
-                        {
-                            skeleton = skeletons[i];
-                        }
-                        else
-                        {
-                            if (skeleton.Position.Z > skeletons[i].Position.Z)
-                            {
-                                skeleton = skeletons[i];
-                            }
-                        }
-                    }
-                }
-            }
-
-            return skeleton;
         }
 
 
@@ -126,10 +104,12 @@ namespace DotsOnTheDeep
                     if (this._KinectDevice != null)
                     {
                         this._KinectDevice.Stop();
-                        this._KinectDevice.SkeletonFrameReady -= KinectDevice_SkeletonFrameReady;
                         this._KinectDevice.SkeletonStream.Disable();
+                        this._KinectDevice.DepthStream.Disable();
                         SkeletonViewerElement.KinectDevice = null;
                         this._FrameSkeletons = null;
+
+                        this._KinectDevice.DepthFrameReady -= Kinect_DepthFrameReady;
                     }
 
                     this._KinectDevice = value;
@@ -140,16 +120,27 @@ namespace DotsOnTheDeep
                         if (this._KinectDevice.Status == KinectStatus.Connected)
                         {
                             this._KinectDevice.SkeletonStream.Enable();
+                            DepthImageStream depthStream = this._KinectDevice.DepthStream;
+                            depthStream.Enable();
+
+                            this._RawDepthImage = new WriteableBitmap(depthStream.FrameWidth,
+                                depthStream.FrameHeight, 96, 96,
+                                PixelFormats.Gray16, null);
+                            this._RawDepthImageRect = new Int32Rect(0, 0, depthStream.FrameWidth,
+                                depthStream.FrameHeight);
+                            this._RawDepthImageStride = depthStream.FrameWidth * depthStream.FrameBytesPerPixel;
+                            DepthImage.Source = this._RawDepthImage;
                             this._FrameSkeletons = new Skeleton[this._KinectDevice.SkeletonStream.FrameSkeletonArrayLength];
                             this._KinectDevice.Start();
 
+                            this._KinectDevice.DepthFrameReady += Kinect_DepthFrameReady;
+
                             SkeletonViewerElement.KinectDevice = this.KinectDevice;
-                            this.KinectDevice.SkeletonFrameReady += KinectDevice_SkeletonFrameReady;
                         }
                     }
                 }
             }
-        }   
-        #endregion Properties 
+        }
+        #endregion Properties
     }
 }
