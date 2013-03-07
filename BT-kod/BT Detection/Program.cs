@@ -61,7 +61,10 @@ class Program
             }
             else
             {
-                Console.WriteLine("Recevied {0} bytes", readLen);
+                while (!d.Connected)
+                {
+                    Console.WriteLine("Recevied {0} bytes", readLen);
+                }
             }
         }
     }
