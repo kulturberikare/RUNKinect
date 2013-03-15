@@ -7,9 +7,9 @@
             <RowDefinition Height="20"/>
             <RowDefinition Height="40*"/>
             <RowDefinition Height="100*"/>
-            <RowDefinition Height="75*"/>
+            <RowDefinition Height="50*"/>
             <RowDefinition Height="100*"/>
-            <RowDefinition Height="75*"/>
+            <RowDefinition Height="50*"/>
             <RowDefinition Height="100*"/>            
         </Grid.RowDefinitions>
         
@@ -38,5 +38,17 @@
                     Grid.RowSpan="3">
             
         </StackPanel>
+        <StackPanel x:Name="Camera1" Background="Red" Grid.Row="2" Grid.Column="0" />
+        <StackPanel x:Name="Camera2" Background="Red" Grid.Row="2" Grid.Column="2" />
+        <StackPanel x:Name="Pulse" Background="Aquamarine" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4"/>
+        <StackPanel x:Name="Buttons" Background="DarkGreen" Grid.Row="5" Grid.Column="1" />
+        <StackPanel x:Name="Button1" Background="GreenYellow" Grid.Row="3" Grid.Column="0" />
+        <StackPanel x:Name="Button2" Background="GreenYellow" Grid.Row="3" Grid.Column="2" />
+        <StackPanel x:Name="Info1" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="0" />
+        <StackPanel x:Name="Info2" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="2" />
+        <StackPanel x:Name="Data1" Background="Wheat" Grid.Row="2" Grid.Column="3" />
+        <StackPanel x:Name="Dataset1" Background="Blue" Grid.Row="3" Grid.Column="3" />
+        <StackPanel x:Name="Data2" Background="Wheat" Grid.Row="4" Grid.Column="3" />
+        <StackPanel x:Name="Dataset2" Background="Blue" Grid.Row="5" Grid.Column="3" />
     </Grid>
 </Window>
