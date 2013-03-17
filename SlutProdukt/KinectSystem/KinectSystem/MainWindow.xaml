@@ -41,7 +41,16 @@
         <StackPanel x:Name="Camera1" Background="Red" Grid.Row="2" Grid.Column="0" />
         <StackPanel x:Name="Camera2" Background="Red" Grid.Row="2" Grid.Column="2" />
         <StackPanel x:Name="Pulse" Background="Aquamarine" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4"/>
-        <StackPanel x:Name="Buttons" Background="DarkGreen" Grid.Row="5" Grid.Column="1" />
+        <StackPanel x:Name="Buttons" Background="DarkGreen" Grid.Row="5" Grid.Column="1" >
+            <Button x:Name="Back" Content="Back" Background="AliceBlue" Height="24" Margin="0,0,0,0" Width="35"
+                    VerticalAlignment="Top" HorizontalAlignment="Left" />
+            <Button x:Name="Play" Content="Play" Background="AliceBlue" Height="24" Margin="40,-24,0,0" Width="35" 
+                    VerticalAlignment="Top" HorizontalAlignment="Left" />
+            <Button x:Name="Forward" Content="Forward" Background="AliceBlue" Height="24" Margin="80,-24,0,0" Width="35" 
+                    HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Button x:Name="Record" Content="Rec" Background="AliceBlue" Height="24" Margin="120,-24,0,0" Width="35"
+                    HorizontalAlignment="Left" VerticalAlignment="Top" />
+        </StackPanel>
         <StackPanel x:Name="Button1" Background="GreenYellow" Grid.Row="3" Grid.Column="0" />
         <StackPanel x:Name="Button2" Background="GreenYellow" Grid.Row="3" Grid.Column="2" />
         <StackPanel x:Name="Info1" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="0" />
