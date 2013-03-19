@@ -51,13 +51,25 @@
             <Button x:Name="Record" Content="Rec" Background="AliceBlue" Height="24" Margin="120,-24,0,0" Width="35"
                     HorizontalAlignment="Left" VerticalAlignment="Top" />
         </StackPanel>
-        <StackPanel x:Name="Button1" Background="GreenYellow" Grid.Row="3" Grid.Column="0" />
-        <StackPanel x:Name="Button2" Background="GreenYellow" Grid.Row="3" Grid.Column="2" />
-        <StackPanel x:Name="Info1" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="0" />
-        <StackPanel x:Name="Info2" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="2" />
-        <StackPanel x:Name="Data1" Background="Wheat" Grid.Row="2" Grid.Column="3" />
-        <StackPanel x:Name="Dataset1" Background="Blue" Grid.Row="3" Grid.Column="3" />
-        <StackPanel x:Name="Data2" Background="Wheat" Grid.Row="4" Grid.Column="3" />
-        <StackPanel x:Name="Dataset2" Background="Blue" Grid.Row="5" Grid.Column="3" />
+        <StackPanel x:Name="Button1" Background="GreenYellow" Grid.Row="3" Grid.Column="0" >
+            <Button x:Name="Depth1" Background="AliceBlue" Content="Depth" Width="70" Height="20" Margin="7,5,0,0" HorizontalAlignment="Left"/>
+            <Button x:Name="Colour1" Background="AliceBlue" Content="Colour" Width="70" Height="20" Margin="7,5,0,0" HorizontalAlignment="Left"/>
+            <Button x:Name="Skeleton1" Background="AliceBlue" Content="Skeleton" Width="70" Height="20" Margin="7,5,0,0" HorizontalAlignment="Left"/>
+            <Button x:Name="AngleUpp1" Background="AliceBlue" Content="Angle +" Width="60" Height="27" Margin="0,-100,10,0" HorizontalAlignment="Right" />
+            <Button x:Name="AngleDown1" Background="AliceBlue" Content="Angle -" Width="60" Height="27" Margin="0,-33,10,0" HorizontalAlignment="Right" />
+        </StackPanel>
+        <StackPanel x:Name="Button2" Background="GreenYellow" Grid.Row="3" Grid.Column="2">
+            <Button x:Name="Depth2" Background="AliceBlue" Content="Depth" Width="70" Height="20" Margin="7,5,0,0" HorizontalAlignment="Left"/>
+            <Button x:Name="Colour2" Background="AliceBlue" Content="Colour" Width="70" Height="20" Margin="7,5,0,0" HorizontalAlignment="Left"/>
+            <Button x:Name="Skeleton2" Background="AliceBlue" Content="Skeleton" Width="70" Height="20" Margin="7,5,0,0" HorizontalAlignment="Left"/>
+            <Button x:Name="AngleUpp2" Background="AliceBlue" Content="Angle +" Width="60" Height="27" Margin="0,-100,10,0" HorizontalAlignment="Right" />
+            <Button x:Name="AngleDown2" Background="AliceBlue" Content="Angle -" Width="60" Height="27" Margin="0,-33,10,0" HorizontalAlignment="Right" />
+        </StackPanel>
+        <StackPanel x:Name="Data1" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="0" />
+        <StackPanel x:Name="Data2" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="2" />
+        <StackPanel x:Name="Info1" Background="Wheat" Grid.Row="2" Grid.Column="3" />
+        <StackPanel x:Name="Infoset1" Background="Blue" Grid.Row="3" Grid.Column="3" />
+        <StackPanel x:Name="Info2" Background="Wheat" Grid.Row="4" Grid.Column="3" />
+        <StackPanel x:Name="Infoset2" Background="Blue" Grid.Row="5" Grid.Column="3" />
     </Grid>
 </Window>
