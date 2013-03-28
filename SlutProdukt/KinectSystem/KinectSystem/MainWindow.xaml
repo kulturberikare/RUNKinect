@@ -38,8 +38,12 @@
                     Grid.RowSpan="3">
             
         </StackPanel>
-        <StackPanel x:Name="Camera1" Background="Red" Grid.Row="2" Grid.Column="0" />
-        <StackPanel x:Name="Camera2" Background="Red" Grid.Row="2" Grid.Column="2" />
+        <StackPanel x:Name="Camera1" Background="Red" Grid.Row="2" Grid.Column="0">
+            <Image x:Name="SightImageOne"/>
+        </StackPanel>
+        <StackPanel x:Name="Camera2" Background="Red" Grid.Row="2" Grid.Column="2">
+            <Image x:Name="SightImageTwo"/>
+        </StackPanel>
         <StackPanel x:Name="Pulse" Background="Aquamarine" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4"/>
         <StackPanel x:Name="Buttons" Background="DarkGreen" Grid.Row="5" Grid.Column="1" >
             <Button x:Name="Back" Content="Back" Background="AliceBlue" Height="24" Margin="3,3,0,0" Width="45"
