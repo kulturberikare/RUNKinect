@@ -6,7 +6,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="40*"/>
-            <RowDefinition Height="100*"/>
+            <RowDefinition Height="90*"/>
             <RowDefinition Height="50*"/>
             <RowDefinition Height="100*"/>
             <RowDefinition Height="50*"/>
@@ -58,14 +58,14 @@
         <StackPanel x:Name="Button1" Background="GreenYellow" Grid.Row="3" Grid.Column="0" >
             <Button x:Name="Depth1" Background="AliceBlue" Content="Depth" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left"/>
             <Button x:Name="Colour1" Background="AliceBlue" Content="Colour" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left"/>
-            <Button x:Name="Skeleton1" Background="AliceBlue" Content="Skeleton" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left"/>
+            <CheckBox x:Name="Skeleton1" Content="Skeleton" Checked="Skeleton1_Checked" Background="AliceBlue" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" />
             <Button x:Name="AngleUpp1" Background="AliceBlue" Content="Angle +" Width="60" Height="27" Margin="0,-100,10,0" HorizontalAlignment="Right" />
             <Button x:Name="AngleDown1" Background="AliceBlue" Content="Angle -" Width="60" Height="27" Margin="0,-33,10,0" HorizontalAlignment="Right" />
         </StackPanel>
         <StackPanel x:Name="Button2" Background="GreenYellow" Grid.Row="3" Grid.Column="2">
             <Button x:Name="Depth2" Background="AliceBlue" Content="Depth" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left"/>
             <Button x:Name="Colour2" Background="AliceBlue" Content="Colour" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left"/>
-            <Button x:Name="Skeleton2" Background="AliceBlue" Content="Skeleton" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left"/>
+            <CheckBox x:Name="Skeleton2" Content="Skeleton" Checked="Skeleton2_Checked" Background="AliceBlue" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" />
             <Button x:Name="AngleUpp2" Background="AliceBlue" Content="Angle +" Width="60" Height="27" Margin="0,-100,10,0" HorizontalAlignment="Right" />
             <Button x:Name="AngleDown2" Background="AliceBlue" Content="Angle -" Width="60" Height="27" Margin="0,-33,10,0" HorizontalAlignment="Right" />
         </StackPanel>

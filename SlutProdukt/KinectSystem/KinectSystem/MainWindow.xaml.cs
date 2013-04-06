@@ -222,6 +222,16 @@ namespace KinectSystem
                 InfoLabel2.Content = file;
             }
         }
+        private void Skeleton1_Checked(object sender, RoutedEventArgs e)
+        {
+            return;
+        }
+
+        private void Skeleton2_Checked(object sender, RoutedEventArgs e)
+        {
+            return;
+        }
+
         #endregion Methods
 
         #region Properties

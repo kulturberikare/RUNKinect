@@ -164,7 +164,7 @@ namespace SkeletontrackingKR
 
         private Vector3D GetJointPoint3D(Joint joint)
         {
-          //  MessageBox.Show("GetJointPoint3D");
+          //MessageBox.Show("GetJointPoint3D");
             return new Vector3D(joint.Position.X, joint.Position.Y, joint.Position.Z);
         }
         //Hittar vinkeln i knät.
@@ -179,7 +179,7 @@ namespace SkeletontrackingKR
             Vector3D a2 = vector3 - vector2;
 
            Double angle = Vector3D.AngleBetween(a1, a2);
-            MessageBox.Show(Convert.ToString(angle));
+          // MessageBox.Show(Convert.ToString(angle));
 
             Angle.Text = string.Format("{0}", angle); //Fungerar inte riktigt MEN vinklarna räknas ut på rätt sätt
         }
