@@ -56,8 +56,8 @@
                     HorizontalAlignment="Left" VerticalAlignment="Top" />
         </StackPanel>
         <StackPanel x:Name="Button1" Background="GreenYellow" Grid.Row="3" Grid.Column="0" >
-            <Button x:Name="Depth1" Background="AliceBlue" Content="Depth" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left"/>
-            <Button x:Name="Colour1" Background="AliceBlue" Content="Colour" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left"/>
+            <Button x:Name="Depth1" Background="AliceBlue" Content="Depth" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Click="StartDepthImageOne"/>
+            <Button x:Name="Colour1" Background="AliceBlue" Content="Colour" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Click="StartColorImageOne"/>
             <CheckBox x:Name="Skeleton1" Content="Skeleton" Checked="Skeleton1_Checked" Background="AliceBlue" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" />
             <Button x:Name="AngleUpp1" Background="AliceBlue" Content="Angle +" Width="60" Height="27" Margin="0,-100,10,0" HorizontalAlignment="Right" />
             <Button x:Name="AngleDown1" Background="AliceBlue" Content="Angle -" Width="60" Height="27" Margin="0,-33,10,0" HorizontalAlignment="Right" />
@@ -69,7 +69,37 @@
             <Button x:Name="AngleUpp2" Background="AliceBlue" Content="Angle +" Width="60" Height="27" Margin="0,-100,10,0" HorizontalAlignment="Right" />
             <Button x:Name="AngleDown2" Background="AliceBlue" Content="Angle -" Width="60" Height="27" Margin="0,-33,10,0" HorizontalAlignment="Right" />
         </StackPanel>
-        <StackPanel x:Name="Data1" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="0" />
+        <StackPanel x:Name="Data1" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Connection ID:" Grid.Row="0" Grid.Column="0"/>
+                <TextBlock Text="{Binding ConectionIDOne}" Grid.Row="0" Grid.Column="1"/>
+                <TextBlock Text="Uniqe Device ID:" Grid.Row="1" Grid.Column="0"/>
+                <TextBlock Text="{Binding DeviceIDOne}" Grid.Row="1" Grid.Column="1"/>
+                <TextBlock Text="Status:" Grid.Row="2" Grid.Column="0"/>
+                <TextBlock Text="{Binding SensorstatusOne}" Grid.Row="2" Grid.Column="1"/>
+                <TextBlock Text="Color Stream:" Grid.Row="3" Grid.Column="0"/>
+                <TextBlock Text="{Binding IsColorStreamEnabledOne}" Grid.Row="3" Grid.Column="1"/>
+                <TextBlock Text="Depth Stream:" Grid.Row="4" Grid.Column="0"/>
+                <TextBlock Text="{Binding IsDepthStreamEnabledOne}" Grid.Row="4" Grid.Column="1"/>
+                <TextBlock Text="Skeleton Stream:" Grid.Row="5" Grid.Column="0"/>
+                <TextBlock Text="{Binding IsSkeletonStreamEnabledOne}" Grid.Row="5" Grid.Column="1"/>
+                <TextBlock Text="Sensor Angle:" Grid.Row="6" Grid.Column="0"/>
+                <TextBlock Text="{Binding SensorAngleOne}" Grid.Row="6" Grid.Column="1"/>
+            </Grid>
+        </StackPanel>
         <StackPanel x:Name="Data2" Background="Yellow" Grid.Row="4" Grid.RowSpan="2" Grid.Column="2" />
         <StackPanel x:Name="Info1" Background="Wheat" Grid.Row="2" Grid.Column="3" />
         <StackPanel x:Name="Infoset1" Background="Blue" Grid.Row="3" Grid.Column="3">

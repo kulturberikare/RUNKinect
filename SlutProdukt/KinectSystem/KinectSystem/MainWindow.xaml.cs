@@ -26,12 +26,14 @@ namespace KinectSystem
         #region Member Variables
         private KinectSensor _KinectSensorOne;
         private KinectSensor _KinectSensorTwo;
-        private WriteableBitmap _ColorImageOne;
-        private WriteableBitmap _ColorImageTwo;
-        private Int32Rect _ColorImageRectOne;
-        private Int32Rect _ColorImageRectTwo;
-        private int _ColorImageStrideOne;
-        private int _ColorImageStrideTwo;
+        private WriteableBitmap _ImageOne;
+        private WriteableBitmap _ImageTwo;
+        private Int32Rect _ImageRectOne;
+        private Int32Rect _ImageRectTwo;
+        private int _ImageStrideOne;
+        private int _ImageStrideTwo;
+
+        private MainWindowViewModel viewModel;
         #endregion Member Variables
 
         #region Constructor
@@ -41,6 +43,14 @@ namespace KinectSystem
             this.Loaded += (s, e) => { DiscoverKinectSensors(); };
             this.Unloaded += (s, e) => { KinectSensorOne = null; KinectSensorTwo = null; };
             this.Closed += MainWindow_Closed;
+            this.viewModel = new MainWindowViewModel();
+            this.viewModel.CanStartOne = false;
+            this.viewModel.CanStopOne = false;
+            this.viewModel.CanStartTwo = false;
+            this.viewModel.CanStopTwo = false;
+            this.DataContext = this.viewModel;
+
+
         }
         #endregion Constructor
 
@@ -67,11 +77,17 @@ namespace KinectSystem
             KinectSensor LastKinect = KinectSensor.KinectSensors
                                .LastOrDefault(x => x.Status == KinectStatus.Connected);
 
-            KinectSensorOne = FirstKinect;
+            if (FirstKinect != null)
+            {
+                KinectSensorOne = FirstKinect;
+            }
+
             if (FirstKinect != null && LastKinect != null && FirstKinect != LastKinect)
             {
                 KinectSensorTwo = LastKinect;
             }
+
+            SetKinectData();
         }
 
         private void KinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
@@ -86,45 +102,188 @@ namespace KinectSystem
                     if (this.KinectSensorOne == null && FirstKinect != LastKinect && e.Sensor == FirstKinect)
                     {
                         KinectSensorOne = FirstKinect;
+                        this.viewModel.SensorstatusOne = e.Status.ToString();
                     }
                     if (this.KinectSensorTwo == null && FirstKinect != LastKinect && e.Sensor == LastKinect)
                     {
                         KinectSensorTwo = LastKinect;
+                        this.viewModel.SensorstatusTwo = e.Status.ToString();
                     }
-                    if (this.KinectSensorTwo != null && FirstKinect != LastKinect && e.Sensor == LastKinect)
+                    if (this.KinectSensorTwo != null && this.KinectSensorOne == null && FirstKinect != LastKinect && e.Sensor == LastKinect)
                     {
                         KinectSensorOne = LastKinect;
+                        this.viewModel.SensorstatusOne = e.Status.ToString();
                     }
                     break;
                 case KinectStatus.Disconnected:
                     if (KinectSensorOne == e.Sensor)
                     {
                         KinectSensorOne = null;
+                        this.viewModel.SensorstatusOne = e.Status.ToString();
                     }
                     if (KinectSensorTwo == e.Sensor)
                     {
                         KinectSensorTwo = null;
+                        this.viewModel.SensorstatusTwo = e.Status.ToString();
                     }
                     break;
             }
+        }
+
+        private void SetKinectData()
+        {
+            if (KinectSensorOne != null)
+            {
+                this.viewModel.ConectionIDOne = this.KinectSensorOne.DeviceConnectionId;
+                this.viewModel.DeviceIDOne = this.KinectSensorOne.UniqueKinectId;
+                this.viewModel.SensorstatusOne = this.KinectSensorOne.Status.ToString();
+                this.viewModel.IsColorStreamEnabledOne = this.KinectSensorOne.ColorStream.IsEnabled;
+                this.viewModel.IsDepthStreamEnabledOne = this.KinectSensorOne.DepthStream.IsEnabled;
+                this.viewModel.IsSkeletonStreamEnabledOne = this.KinectSensorOne.SkeletonStream.IsEnabled;
+                this.viewModel.SensorAngleOne = this.KinectSensorOne.ElevationAngle;
+            }
+
+            if (KinectSensorTwo != null)
+            {
+                this.viewModel.ConectionIDTwo = this.KinectSensorTwo.DeviceConnectionId;
+                this.viewModel.DeviceIDTwo = this.KinectSensorTwo.UniqueKinectId;
+                this.viewModel.SensorstatusTwo = this.KinectSensorTwo.Status.ToString();
+                this.viewModel.IsColorStreamEnabledTwo = this.KinectSensorTwo.ColorStream.IsEnabled;
+                this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorTwo.DepthStream.IsEnabled;
+                this.viewModel.IsSkeletonStreamEnabledTwo = this.KinectSensorTwo.SkeletonStream.IsEnabled;
+                this.viewModel.SensorAngleTwo = this.KinectSensorTwo.ElevationAngle;
+            }
+        }
+
+        private void StartColorImageOne(object sender, RoutedEventArgs e)
+        {
+            if (!this.viewModel.IsColorStreamEnabledOne)
+            {
+                KinectSensor sensor = KinectSensorOne;
+
+                StopDepthImageOne(sensor);
+
+                ColorImageStream colorStream = sensor.ColorStream;
+                colorStream.Enable();
+
+                this._ImageOne = new WriteableBitmap(colorStream.FrameWidth,
+                                                          colorStream.FrameHeight, 96, 96,
+                                                          PixelFormats.Bgr32, null);
+                this._ImageRectOne = new Int32Rect(0, 0, colorStream.FrameWidth,
+                                                        colorStream.FrameHeight);
+                this._ImageStrideOne = colorStream.FrameWidth * colorStream.FrameBytesPerPixel;
+                SightImageOne.Source = this._ImageOne;
+
+                sensor.ColorFrameReady += Kinect_ColorFrameReadyOne;
+                this.viewModel.IsColorStreamEnabledOne = this.KinectSensorOne.ColorStream.IsEnabled;
+            }
+        }
+
+        private void StartColorImageTwo(object sender, RoutedEventArgs e)
+        {
+            if (!this.viewModel.IsColorStreamEnabledTwo)
+            {
+                KinectSensor sensor = KinectSensorTwo;
+
+                StopDepthImageTwo(sensor);
+
+                ColorImageStream colorStream = sensor.ColorStream;
+                colorStream.Enable();
+
+                this._ImageTwo = new WriteableBitmap(colorStream.FrameWidth,
+                                                          colorStream.FrameHeight, 96, 96,
+                                                          PixelFormats.Bgr32, null);
+                this._ImageRectTwo = new Int32Rect(0, 0, colorStream.FrameWidth,
+                                                        colorStream.FrameHeight);
+                this._ImageStrideTwo = colorStream.FrameWidth * colorStream.FrameBytesPerPixel;
+                SightImageTwo.Source = this._ImageTwo;
+
+                sensor.ColorFrameReady += Kinect_ColorFrameReadyTwo;
+                this.viewModel.IsColorStreamEnabledTwo = this.KinectSensorOne.ColorStream.IsEnabled;
+            }
+        }
+
+        private void StopColorImageOne(KinectSensor sensor)
+        {
+            sensor.ColorFrameReady -= Kinect_ColorFrameReadyOne;
+            sensor.ColorStream.Disable();
+            this.viewModel.IsColorStreamEnabledOne = this.KinectSensorOne.ColorStream.IsEnabled;
+        }
+
+        private void StopColorImageTwo(KinectSensor sensor)
+        {
+            sensor.ColorFrameReady -= Kinect_ColorFrameReadyTwo;
+            sensor.ColorStream.Disable();
+            this.viewModel.IsColorStreamEnabledTwo = this.KinectSensorOne.ColorStream.IsEnabled;
+        }
+
+        private void StartDepthImageOne(object sender, RoutedEventArgs e)
+        {
+            if (!this.viewModel.IsDepthStreamEnabledOne)
+            {
+                KinectSensor sensor = KinectSensorOne;
+
+                StopColorImageOne(sensor);
+                
+                DepthImageStream depthStream = sensor.DepthStream;
+                depthStream.Enable();
+
+                this._ImageOne = new WriteableBitmap(depthStream.FrameWidth,
+                    depthStream.FrameHeight, 96, 96,
+                    PixelFormats.Gray16, null);
+                this._ImageRectOne = new Int32Rect(0, 0, depthStream.FrameWidth,
+                    depthStream.FrameHeight);
+                this._ImageStrideOne = depthStream.FrameWidth * depthStream.FrameBytesPerPixel;
+                SightImageOne.Source = this._ImageOne;
+
+                sensor.DepthFrameReady += Kinect_DepthFrameReadyOne;
+                this.viewModel.IsDepthStreamEnabledOne = this.KinectSensorOne.DepthStream.IsEnabled;
+            }
+        }
+
+        private void StartDepthImageTwo(object sender, RoutedEventArgs e)
+        {
+            if (!this.viewModel.IsDepthStreamEnabledTwo)
+            {
+                KinectSensor sensor = KinectSensorTwo;
+
+                StopColorImageTwo(sensor);
+
+                DepthImageStream depthStream = sensor.DepthStream;
+                depthStream.Enable();
+
+                this._ImageTwo = new WriteableBitmap(depthStream.FrameWidth,
+                    depthStream.FrameHeight, 96, 96,
+                    PixelFormats.Gray16, null);
+                this._ImageRectTwo = new Int32Rect(0, 0, depthStream.FrameWidth,
+                    depthStream.FrameHeight);
+                this._ImageStrideTwo = depthStream.FrameWidth * depthStream.FrameBytesPerPixel;
+                SightImageTwo.Source = this._ImageTwo;
+
+                sensor.DepthFrameReady += Kinect_DepthFrameReadyTwo;
+                this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorOne.DepthStream.IsEnabled;
+            }
+        }
+
+        private void StopDepthImageOne(KinectSensor sensor)
+        {
+            sensor.DepthFrameReady -= Kinect_DepthFrameReadyOne;
+            sensor.DepthStream.Disable();
+            this.viewModel.IsDepthStreamEnabledOne = this.KinectSensorOne.DepthStream.IsEnabled;
+        }
+
+        private void StopDepthImageTwo(KinectSensor sensor)
+        {
+            sensor.DepthFrameReady -= Kinect_DepthFrameReadyTwo;
+            sensor.DepthStream.Disable();
+            this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorOne.DepthStream.IsEnabled;
         }
 
         private void InitializeKinectSensorOne(KinectSensor sensor)
         {
             if (sensor != null)
             {
-                ColorImageStream colorStream = sensor.ColorStream;
-                colorStream.Enable();
-
-                this._ColorImageOne = new WriteableBitmap(colorStream.FrameWidth,
-                                                          colorStream.FrameHeight, 96, 96,
-                                                          PixelFormats.Bgr32, null);
-                this._ColorImageRectOne = new Int32Rect(0, 0, colorStream.FrameWidth,
-                                                        colorStream.FrameHeight);
-                this._ColorImageStrideOne = colorStream.FrameWidth * colorStream.FrameBytesPerPixel;
-                SightImageOne.Source = this._ColorImageOne;
-
-                sensor.ColorFrameReady += Kinect_ColorFrameReadyOne;
+                SightImageOne.Source = this._ImageOne;
                 sensor.Start();
             }
         }
@@ -133,18 +292,7 @@ namespace KinectSystem
         {
             if (sensor != null)
             {
-                ColorImageStream colorStream = sensor.ColorStream;
-                colorStream.Enable();
-
-                this._ColorImageTwo = new WriteableBitmap(colorStream.FrameWidth,
-                                                          colorStream.FrameHeight, 96, 96,
-                                                          PixelFormats.Bgr32, null);
-                this._ColorImageRectTwo = new Int32Rect(0, 0, colorStream.FrameWidth,
-                                                        colorStream.FrameHeight);
-                this._ColorImageStrideTwo = colorStream.FrameWidth * colorStream.FrameBytesPerPixel;
-                SightImageTwo.Source = this._ColorImageTwo;
-
-                sensor.ColorFrameReady += Kinect_ColorFrameReadyTwo;
+                SightImageTwo.Source = this._ImageTwo;
                 sensor.Start();
             }
         }
@@ -154,7 +302,15 @@ namespace KinectSystem
             if (sensor != null)
             {
                 sensor.Stop();
-                sensor.ColorFrameReady -= Kinect_ColorFrameReadyOne;
+                if (this.viewModel.IsColorStreamEnabledOne)
+                {
+                    StopColorImageOne(sensor);
+                }
+
+                if (this.viewModel.IsDepthStreamEnabledOne)
+                {
+                    sensor.DepthFrameReady -= Kinect_DepthFrameReadyOne;
+                }
             }
         }
 
@@ -163,7 +319,15 @@ namespace KinectSystem
             if (sensor != null)
             {
                 sensor.Stop();
-                sensor.ColorFrameReady -= Kinect_ColorFrameReadyTwo;
+                if (this.viewModel.IsColorStreamEnabledOne)
+                {
+                    sensor.ColorFrameReady -= Kinect_ColorFrameReadyOne;
+                }
+
+                if (this.viewModel.IsDepthStreamEnabledOne)
+                {
+                    sensor.DepthFrameReady -= Kinect_DepthFrameReadyOne;
+                }
             }
         }
 
@@ -175,8 +339,8 @@ namespace KinectSystem
                 {
                     byte[] pixelData = new byte[frame.PixelDataLength];
                     frame.CopyPixelDataTo(pixelData);
-                    this._ColorImageOne.WritePixels(this._ColorImageRectOne,
-                                                    pixelData, this._ColorImageStrideOne, 0);
+                    this._ImageOne.WritePixels(this._ImageRectOne,
+                                                    pixelData, this._ImageStrideOne, 0);
                 }
             }
         }
@@ -189,8 +353,36 @@ namespace KinectSystem
                 {
                     byte[] pixelData = new byte[frame.PixelDataLength];
                     frame.CopyPixelDataTo(pixelData);
-                    this._ColorImageTwo.WritePixels(this._ColorImageRectTwo,
-                                                    pixelData, this._ColorImageStrideTwo, 0);
+                    this._ImageTwo.WritePixels(this._ImageRectTwo,
+                                                    pixelData, this._ImageStrideTwo, 0);
+                }
+            }
+        }
+
+        private void Kinect_DepthFrameReadyOne(object sender, DepthImageFrameReadyEventArgs e)
+        {
+            using (DepthImageFrame frame = e.OpenDepthImageFrame())
+            {
+                if (frame != null)
+                {
+                    short[] pixelData = new short[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(pixelData);
+                    this._ImageOne.WritePixels(this._ImageRectOne,
+                                                   pixelData, this._ImageStrideOne, 0);
+                }
+            }
+        }
+
+        private void Kinect_DepthFrameReadyTwo(object sender, DepthImageFrameReadyEventArgs e)
+        {
+            using (DepthImageFrame frame = e.OpenDepthImageFrame())
+            {
+                if (frame != null)
+                {
+                    short[] pixelData = new short[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(pixelData);
+                    this._ImageTwo.WritePixels(this._ImageRectTwo,
+                                                   pixelData, this._ImageStrideTwo, 0);
                 }
             }
         }
