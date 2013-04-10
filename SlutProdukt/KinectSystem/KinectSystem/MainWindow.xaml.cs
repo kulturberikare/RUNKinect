@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Windows.Forms;
 
 using Microsoft.Kinect;
+using System.Windows.Media.Media3D;
 
 namespace KinectSystem
 {
@@ -34,6 +35,12 @@ namespace KinectSystem
         private int _ImageStrideTwo;
 
         private MainWindowViewModel viewModel;
+
+        //Djup expriment
+        int pixelHeight = 240;
+        int pixelWidth = 320;
+        private GeometryModel3D[] modelPoints = new GeometryModel3D[240 * 320];
+        private GeometryModel3D geometryModel;
         #endregion Member Variables
 
         #region Constructor
@@ -88,6 +95,8 @@ namespace KinectSystem
             }
 
             SetKinectData();
+            //Djup Exprimentet i 3D
+            SetData();
         }
 
         private void KinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
@@ -226,7 +235,8 @@ namespace KinectSystem
                 StopColorImageOne(sensor);
                 
                 DepthImageStream depthStream = sensor.DepthStream;
-                depthStream.Enable();
+                //Har ändrat upplösningen här för djup 3D experimentet 
+                depthStream.Enable(DepthImageFormat.Resolution320x240Fps30);
 
                 this._ImageOne = new WriteableBitmap(depthStream.FrameWidth,
                     depthStream.FrameHeight, 96, 96,
@@ -363,12 +373,34 @@ namespace KinectSystem
         {
             using (DepthImageFrame frame = e.OpenDepthImageFrame())
             {
-                if (frame != null)
+                //Glöm ej att Lägga tillbaka den här!
+                //if (frame != null)
+                //{
+                //    short[] pixelData = new short[frame.PixelDataLength];
+                //    frame.CopyPixelDataTo(pixelData);
+                //    this._ImageOne.WritePixels(this._ImageRectOne,
+                //                                   pixelData, this._ImageStrideOne, 0);
+                //}
+
+                if (frame == null)
                 {
-                    short[] pixelData = new short[frame.PixelDataLength];
-                    frame.CopyPixelDataTo(pixelData);
-                    this._ImageOne.WritePixels(this._ImageRectOne,
-                                                   pixelData, this._ImageStrideOne, 0);
+                    return;
+                }
+                short[] pixelData = new short[frame.PixelDataLength];
+                frame.CopyPixelDataTo(pixelData);
+                int translatePoint = 0;
+                for (int posY = 0; posY < frame.Height; posY += 2)
+                {
+                    for (int posX = 0; posX < frame.Width; posX += 2)
+                    {
+                        int depth = ((ushort)pixelData[posX + posY * frame.Width]) >> 3;
+                        if (depth == KinectSensorOne.DepthStream.UnknownDepth)
+                        {
+                            continue;
+                        }
+                        ((TranslateTransform3D)modelPoints[translatePoint].Transform).OffsetZ = depth;
+                        translatePoint++;
+                    }
                 }
             }
         }
@@ -472,5 +504,38 @@ namespace KinectSystem
             }
         }
         #endregion Properties
+
+        //Kom ihåg att fixa tillbaka depthframe event handlern + konstruktorn + Member variables!!!
+        #region Test 3D Depth
+        private void SetData()
+        {
+            int i = 0;
+            int posZ = 0;
+            for (int posY = 0; posY < pixelHeight; posY += 2)
+            {
+                for (int posX = 0; posX < pixelWidth; posX += 2)
+                {
+                    modelPoints[i] = CreateTriangleModel(new Point3D(posX, posY, posZ), new Point3D(posX, posY + 2, posZ), new Point3D(posX + 2, posY + 2, posZ));
+                    modelPoints[i].Transform = new TranslateTransform3D(0, 0, 0);
+                    SkeletonModelGroup.Children.Add(modelPoints[i]);
+                    i++;
+                }
+            }
+        }
+
+        private GeometryModel3D CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2)
+        {
+            MeshGeometry3D mesh = new MeshGeometry3D();
+            mesh.Positions.Add(p0);
+            mesh.Positions.Add(p1);
+            mesh.Positions.Add(p2);
+            mesh.TriangleIndices.Add(0);
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(2);
+            Material material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
+            geometryModel = new GeometryModel3D(mesh, material);
+            return geometryModel;
+        }
+        #endregion Test 3D Depth
     }
 }
