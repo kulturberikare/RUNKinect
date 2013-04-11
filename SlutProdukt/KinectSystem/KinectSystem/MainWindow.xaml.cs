@@ -208,7 +208,7 @@ namespace KinectSystem
                 SightImageTwo.Source = this._ImageTwo;
 
                 sensor.ColorFrameReady += Kinect_ColorFrameReadyTwo;
-                this.viewModel.IsColorStreamEnabledTwo = this.KinectSensorOne.ColorStream.IsEnabled;
+                this.viewModel.IsColorStreamEnabledTwo = this.KinectSensorTwo.ColorStream.IsEnabled;
             }
         }
 
@@ -271,7 +271,7 @@ namespace KinectSystem
                 SightImageTwo.Source = this._ImageTwo;
 
                 sensor.DepthFrameReady += Kinect_DepthFrameReadyTwo;
-                this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorOne.DepthStream.IsEnabled;
+                this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorTwo.DepthStream.IsEnabled;
             }
         }
 
@@ -374,26 +374,27 @@ namespace KinectSystem
             using (DepthImageFrame frame = e.OpenDepthImageFrame())
             {
                 //Glöm ej att Lägga tillbaka den här!
-                //if (frame != null)
-                //{
-                //    short[] pixelData = new short[frame.PixelDataLength];
-                //    frame.CopyPixelDataTo(pixelData);
-                //    this._ImageOne.WritePixels(this._ImageRectOne,
-                //                                   pixelData, this._ImageStrideOne, 0);
-                //}
+                if (frame != null)
+                {
+                    short[] pixelData = new short[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(pixelData);
+                    this._ImageOne.WritePixels(this._ImageRectOne,
+                                                   pixelData, this._ImageStrideOne, 0);
+                }
+
 
                 if (frame == null)
                 {
                     return;
                 }
-                short[] pixelData = new short[frame.PixelDataLength];
-                frame.CopyPixelDataTo(pixelData);
+                short[] pixelData1 = new short[frame.PixelDataLength];
+                frame.CopyPixelDataTo(pixelData1);
                 int translatePoint = 0;
                 for (int posY = 0; posY < frame.Height; posY += 2)
                 {
                     for (int posX = 0; posX < frame.Width; posX += 2)
                     {
-                        int depth = ((ushort)pixelData[posX + posY * frame.Width]) >> 3;
+                        int depth = ((ushort)pixelData1[posX + posY * frame.Width]) >> 3;
                         if (depth == KinectSensorOne.DepthStream.UnknownDepth)
                         {
                             continue;

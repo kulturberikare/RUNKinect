@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 
 using System.ComponentModel;
+using System.Windows.Forms;
 namespace KinectSystem
 {
     public class MainWindowViewModel : INotifyPropertyChanged
@@ -259,8 +260,8 @@ namespace KinectSystem
             {
                 if (isColorStreamEnabledValueTwo != value)
                 {
-                    this.isColorStreamEnabledValueTwo = value;
-                    this.OnNotifyPropertyChanged("IsColorstreamEnabled");
+                    this.isColorStreamEnabledValueTwo = value;                    
+                    this.OnNotifyPropertyChanged("IsColorstreamEnabledTwo");
                 }
             }
         }

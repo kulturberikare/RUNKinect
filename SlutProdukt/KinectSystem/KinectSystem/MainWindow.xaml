@@ -29,12 +29,12 @@
             <MenuItem Header="_Help" />
         </Menu>
        
-        <GroupBox x:Name="LabelPanel" Background="Black" Grid.Column="0" 
+        <StackPanel x:Name="LabelPanel" Background="Gray" Grid.Column="0" 
                     Grid.Row="1" Grid.ColumnSpan="4" >
-            <Label Foreground="Red" FontSize="30" FontFamily="Comic Sans MS, Verdana"
-                   Content="The Freaking Awesome App Of Pure Awesomeness" HorizontalAlignment="Left"
-                   VerticalAlignment="Center"/>
-        </GroupBox>
+            <Image Source="Images/RunKinect.png" Width="100" Height="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="2,2,0,0"/>
+            <Label Foreground="Black" FontSize="30" FontFamily="Arial Black" 
+        		Content="RunKinect" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-70,0,0"/>
+        </StackPanel>
         <GroupBox x:Name="ImageIn3D" Header="Camera in 3D" Background="Cornsilk" Grid.Row="2" Grid.Column="1"
                     Grid.RowSpan="4">
             <Viewport3D x:Name="viewPort" Width="400" Height="400" HorizontalAlignment="Left" VerticalAlignment="Top">
@@ -75,7 +75,7 @@
         <GroupBox Header="Buttons for camera 1" Background="Wheat" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" >
             <StackPanel x:Name="Button1" >
                 <Button x:Name="Depth1" Background="AliceBlue" Content="Depth" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Click="StartDepthImageOne"/>
-                <Button x:Name="Colour1" Background="AliceBlue" Content="Colour" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Click="StartColorImageOne"/>
+                <Button x:Name="Color1" Background="AliceBlue" Content="Color" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Click="StartColorImageOne"/>
                 <ToggleButton Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Background="AliceBlue" >
                     <CheckBox x:Name="Skeleton1" Content="Skeleton" Checked="Skeleton1_Checked" Background="AliceBlue" Width="70" Height="22" HorizontalAlignment="Left" />
                 </ToggleButton>
@@ -86,7 +86,7 @@
         <GroupBox Header="Buttons for camera 2" Background="Wheat" Grid.Row="3" Grid.RowSpan="2" Grid.Column="2">
             <StackPanel x:Name="Button2" >
                 <Button x:Name="Depth2" Background="AliceBlue" Content="Depth" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Click="StartDepthImageTwo" />
-                <Button x:Name="Colour2" Background="AliceBlue" Content="Colour" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Click="StartColorImageTwo" />
+                <Button x:Name="Color2" Background="AliceBlue" Content="Color" Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Click="StartColorImageTwo" />
                 <ToggleButton Width="70" Height="22" Margin="7,5,0,0" HorizontalAlignment="Left" Background="AliceBlue" >
                     <CheckBox x:Name="Skeleton2" Content="Skeleton" Checked="Skeleton2_Checked" Background="AliceBlue" Width="70" Height="22" HorizontalAlignment="Left" />
                 </ToggleButton>
