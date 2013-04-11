@@ -446,6 +446,43 @@ namespace KinectSystem
                 InfoLabel2.Content = file;
             }
         }
+
+        private void AngleUpOne(object sender, RoutedEventArgs e)
+        {
+            if (this.KinectSensorOne.ElevationAngle != this.KinectSensorOne.MaxElevationAngle)
+            {
+                this.KinectSensorOne.ElevationAngle += 1;
+                this.viewModel.SensorAngleOne = this.KinectSensorOne.ElevationAngle;
+            }
+        }
+
+        private void AngleUpTwo(object sender, RoutedEventArgs e)
+        {
+            if (this.KinectSensorTwo.ElevationAngle != this.KinectSensorTwo.MaxElevationAngle)
+            {
+                this.KinectSensorTwo.ElevationAngle += 1;
+                this.viewModel.SensorAngleTwo = this.KinectSensorTwo.ElevationAngle;
+            }
+        }
+
+        private void AngleDownOne(object sender, RoutedEventArgs e)
+        {
+            if (this.KinectSensorOne.ElevationAngle != this.KinectSensorOne.MinElevationAngle)
+            {
+                this.KinectSensorOne.ElevationAngle -= 1;
+                this.viewModel.SensorAngleOne = this.KinectSensorOne.ElevationAngle;
+            }
+        }
+
+        private void AngleDownTwo(object sender, RoutedEventArgs e)
+        {
+            if (this.KinectSensorTwo.ElevationAngle != this.KinectSensorTwo.MinElevationAngle)
+            {
+                this.KinectSensorTwo.ElevationAngle -= 1;
+                this.viewModel.SensorAngleTwo = this.KinectSensorTwo.ElevationAngle;
+            }
+        }
+
         private void Skeleton1_Checked(object sender, RoutedEventArgs e)
         {
             return;
