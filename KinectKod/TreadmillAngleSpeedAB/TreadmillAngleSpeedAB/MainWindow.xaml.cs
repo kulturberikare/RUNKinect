@@ -85,7 +85,7 @@ namespace TreadmillAngleSpeedAB
                         currentskeleton = this._CurrentFrameSkeletons[i];
                         // previousskeleton = this._PreviousFrameSkeletons[i];
 
-                        if (currentskeleton.TrackingState == SkeletonTrackingState.Tracked)// && previousskeleton != null)
+                        if (currentskeleton.TrackingState == SkeletonTrackingState.Tracked)
                         {
                             Joint j = currentskeleton.Joints[JointType.HandRight];
 
@@ -95,32 +95,30 @@ namespace TreadmillAngleSpeedAB
 
                            
                             Vector3D vel = JointVelocity(currentskeleton, prev);
-                            prev = new Vector3D(xpos, ypos, zpos);
-                            //MessageBox.Show("Ja");
-                            //Vector3D vel = JointVelocity(currentskeleton, previousskeleton);
+                            prev = new Vector3D(xpos, ypos, zpos); // prev kommer användas i föregående rad nästa "gång".
 
                             //Skriver ut koordinaterna för den JointType som valts
                            // FootVelocity.Text = String.Format("{0} m/s i x-led\n\n {1} m/s i y-led\n\n {2} m/s i z-led", vel.X, vel.Y, vel.Z);
 
-                            if(vel.X < 0 && StartTime == DateTime.MinValue)
+                            if(vel.X < 0 && StartTime == DateTime.MinValue) // Börjar foten gå bakåt? Är StartTime satt till MinValue?
                             {
                                 StartTime = DateTime.Now;
                                 StartPoint = prev; 
                             }
 
-                            if (vel.Y > 0 && StartTime != DateTime.MinValue)
+                            if (vel.Y > 0 && StartTime != DateTime.MinValue) // Börjar foten gå uppåt? Har StartTime fått ett värde från föregående if-sats?
                             {
-                                double Angle = TreadmillAngle(StartPoint, EndPoint);
+                                double TimeDifferenceMs = (DateTime.Now - StartTime).Milliseconds; // Skillnad mellan nuvarande tid och StartTime i ms.
+                                double Time = TimeDifferenceMs * 1000; // Gör om till s
 
-                                double TimeDifferenceMs = (DateTime.Now - StartTime).Milliseconds;
-                                double Time = TimeDifferenceMs * 1000;
-
-                                EndPoint = prev;
+                                EndPoint = prev; // Ny prev jämfört med StartPoint    
                                 double Distance = AbsDistance(StartPoint, EndPoint);
 
-                                double Velocity = TreadmillSpeed(Distance, Time); 
+                                double Velocity = TreadmillSpeed(Distance, Time);
 
-                                StartTime = DateTime.MinValue;
+                                double Angle = TreadmillAngle(StartPoint, EndPoint);
+
+                                StartTime = DateTime.MinValue; // Nu är vi klara med StartTime. Förbereder för nästa mätning.
 
                                 FootVelocity.Text = String.Format("{0} grader \n, {1} m/s", Angle, Velocity);
                             }
@@ -131,14 +129,12 @@ namespace TreadmillAngleSpeedAB
         }
 
         // Metod som är tänkt att hålla koll på hastigheten i en specifik JointType (höger fot i vårt fall). 
-        // Jämför Skeleton-data från nuvarande framen med föregående.
-       // public Vector3D JointVelocity(Skeleton currentskeleton, Skeleton previousskeleton) // Göra om till Point3D?
+        // Jämför Skeleton-data från nuvarande framen med en Vector3D innehållande Joint-koordinaterna från föregående frame.
     public Vector3D JointVelocity(Skeleton currentskeleton, Vector3D prev)    
     {
             if (currentskeleton != null)
             {
-                Joint currentFoot = currentskeleton.Joints[JointType.HandRight]; // Osäkert om man kan skriva som i hakparentesen.
-                //Joint previousFoot = previousskeleton.Joints[JointType.HandRight];
+                Joint currentFoot = currentskeleton.Joints[JointType.FootRight];
 
                 // 30 eftersom 30 fps (1/30 s per frame).
                 // velocity = sträcka / tid
@@ -154,7 +150,7 @@ namespace TreadmillAngleSpeedAB
 
             else
             {
-                return new Vector3D(0, 0, 0);
+                return new Vector3D(0, 0, 0); // Behövs ej?
             }
         }
 
