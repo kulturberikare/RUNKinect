@@ -29,10 +29,12 @@ namespace TreadmillAngleSpeedAB
         #region Member Variables
         private KinectSensor _Kinect;
         private Skeleton[] _CurrentFrameSkeletons;
-        Vector3D prev = new Vector3D(0, 0, 0);
-        Vector3D StartPoint = new Vector3D(0, 0, 0);
-        Vector3D EndPoint = new Vector3D(0, 0, 0);
-        DateTime StartTime;
+        private Vector3D prev = new Vector3D(0, 0, 0);
+        private Vector3D StartPoint = new Vector3D(0, 0, 0);
+        private Vector3D EndPoint = new Vector3D(0, 0, 0);
+        private DateTime StartTime = DateTime.MinValue;
+
+        private double[] TestArray = { 0, 0, 2, 3, 4, 5, 6, 7, 8, 0 };
 
         #endregion Member Variables
 
@@ -46,7 +48,7 @@ namespace TreadmillAngleSpeedAB
         }
         #endregion Constructor
 
-        #region Methods
+        #region Primary Methods
         private void KinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
         {
             switch (e.Status)
@@ -93,14 +95,14 @@ namespace TreadmillAngleSpeedAB
                             float ypos = j.Position.Y;
                             float zpos = j.Position.Z;
 
-                           
                             Vector3D vel = JointVelocity(currentskeleton, prev);
                             prev = new Vector3D(xpos, ypos, zpos); // prev kommer användas i föregående rad nästa "gång".
 
-                            //Skriver ut koordinaterna för den JointType som valts
+                            //Skriver ut hastighetsvektorerna för den JointType som valts
                            // FootVelocity.Text = String.Format("{0} m/s i x-led\n\n {1} m/s i y-led\n\n {2} m/s i z-led", vel.X, vel.Y, vel.Z);
 
-                            if(vel.X < 0 && StartTime == DateTime.MinValue) // Börjar foten gå bakåt? Är StartTime satt till MinValue?
+                            // OBS! att vel.X nu ska vara större än 0.
+                            if(vel.X > 0 && StartTime == DateTime.MinValue) // Börjar foten gå bakåt? Är StartTime satt till MinValue?
                             {
                                 StartTime = DateTime.Now;
                                 StartPoint = prev; 
@@ -109,7 +111,7 @@ namespace TreadmillAngleSpeedAB
                             if (vel.Y > 0 && StartTime != DateTime.MinValue) // Börjar foten gå uppåt? Har StartTime fått ett värde från föregående if-sats?
                             {
                                 double TimeDifferenceMs = (DateTime.Now - StartTime).Milliseconds; // Skillnad mellan nuvarande tid och StartTime i ms.
-                                double Time = TimeDifferenceMs * 1000; // Gör om till s
+                                double Time = TimeDifferenceMs / 1000; // Gör om till s
 
                                 EndPoint = prev; // Ny prev jämfört med StartPoint    
                                 double Distance = AbsDistance(StartPoint, EndPoint);
@@ -120,14 +122,17 @@ namespace TreadmillAngleSpeedAB
 
                                 StartTime = DateTime.MinValue; // Nu är vi klara med StartTime. Förbereder för nästa mätning.
 
-                                FootVelocity.Text = String.Format("{0} grader \n, {1} m/s", Angle, Velocity);
+                                FootVelocity.Text = String.Format("{0} grader \n {1} m/s", Angle, Velocity);
                             }
                         }
                     }
                 }
             }
         }
+        
+        #endregion Primary Methods
 
+        #region Helper Methods
         // Metod som är tänkt att hålla koll på hastigheten i en specifik JointType (höger fot i vårt fall). 
         // Jämför Skeleton-data från nuvarande framen med en Vector3D innehållande Joint-koordinaterna från föregående frame.
     public Vector3D JointVelocity(Skeleton currentskeleton, Vector3D prev)    
@@ -138,10 +143,11 @@ namespace TreadmillAngleSpeedAB
 
                 // 30 eftersom 30 fps (1/30 s per frame).
                 // velocity = sträcka / tid
+                // 3.6 omvandlar till km/h
 
-                double xvelocity = (currentFoot.Position.X - prev.X) * 30;
-                double yvelocity = (currentFoot.Position.Y - prev.Y) * 30;
-                double zvelocity = (currentFoot.Position.Z - prev.Z) * 30;            
+                double xvelocity = (currentFoot.Position.X - prev.X) * 30 * 3.6;
+                double yvelocity = (currentFoot.Position.Y - prev.Y) * 30 * 3.6;
+                double zvelocity = (currentFoot.Position.Z - prev.Z) * 30 * 3.6;            
 
                 //MessageBox.Show("Yes");
                 //JointPosition.Text = String.Format("current {0} \n\n previous {1}", currentFoot.Position.X, prev.X);
@@ -172,7 +178,7 @@ namespace TreadmillAngleSpeedAB
         public double TreadmillAngle(Vector3D FootStart, Vector3D FootEnd)
         {
             double oppcat = (FootStart.Y - FootEnd.Y);
-            double nearcat = (FootStart.X - FootStart.X);
+            double nearcat = (FootStart.X - FootEnd.X);
 
             // Lägg ev. till Math.Round
             double angle = (Math.Atan(oppcat / nearcat)) * (180 / Math.PI);
@@ -190,8 +196,30 @@ namespace TreadmillAngleSpeedAB
             return speed;
         }
 
+        // Extra hjälpfunktioner
 
-        #endregion Methods
+        // Sätta in nya värden i en array, en efter en
+        public double[] PutIn(double[] array, double value, int index)
+        {
+            array.SetValue(value, index);
+
+            return array;
+        }
+
+        // Ta medelvärde från en array. Funkar!
+        public double ArrayMean(double[] array)
+        {
+            double sum = 0;
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                sum += array[i];
+            }
+
+            return sum / array.Length;
+        }
+
+        #endregion Helper Methods
 
         #region Properties
         public KinectSensor Kinect
