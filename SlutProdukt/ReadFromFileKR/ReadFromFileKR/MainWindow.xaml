@@ -1,0 +1,14 @@
+﻿<Window x:Class="ReadFromFileKR.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" 
+        x:Name="This" Height="460" Width="640">
+    <Grid Margin="0,0,0,4">
+        <chartingToolkit:Chart Name="lineChart" Title="Line Series Demo">
+            <chartingToolkit:LineSeries DependentValuePath="Value"
+                                        IndependentValuePath="Key" 
+                                        ItemsSource="{Binding}"
+                                        IsSelectionEnabled="True"/>
+        </chartingToolkit:Chart>
+    </Grid>
+</Window>
