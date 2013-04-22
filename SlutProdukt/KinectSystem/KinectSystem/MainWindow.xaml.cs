@@ -33,6 +33,7 @@ namespace KinectSystem
         private Int32Rect _ImageRectTwo;
         private int _ImageStrideOne;
         private int _ImageStrideTwo;
+        private Skeleton[] _FrameSkeletons;
 
         private MainWindowViewModel viewModel;
 
@@ -233,7 +234,7 @@ namespace KinectSystem
                 KinectSensor sensor = KinectSensorOne;
 
                 StopColorImageOne(sensor);
-                
+
                 DepthImageStream depthStream = sensor.DepthStream;
                 //Har ändrat upplösningen här för djup 3D experimentet 
                 depthStream.Enable(DepthImageFormat.Resolution320x240Fps30);
@@ -329,14 +330,14 @@ namespace KinectSystem
             if (sensor != null)
             {
                 sensor.Stop();
-                if (this.viewModel.IsColorStreamEnabledOne)
+                if (this.viewModel.IsColorStreamEnabledTwo)
                 {
-                    sensor.ColorFrameReady -= Kinect_ColorFrameReadyOne;
+                    sensor.ColorFrameReady -= Kinect_ColorFrameReadyTwo;
                 }
 
                 if (this.viewModel.IsDepthStreamEnabledOne)
                 {
-                    sensor.DepthFrameReady -= Kinect_DepthFrameReadyOne;
+                    sensor.DepthFrameReady -= Kinect_DepthFrameReadyTwo;
                 }
             }
         }
@@ -419,6 +420,8 @@ namespace KinectSystem
                 }
             }
         }
+
+
 
         private void BrowseButton1_Click(object sender, RoutedEventArgs e)
         {
@@ -514,6 +517,9 @@ namespace KinectSystem
                 {
                     this._KinectSensorOne = value;
                     InitializeKinectSensorOne(this._KinectSensorOne);
+                    this._KinectSensorOne.SkeletonStream.Enable();
+                    this._FrameSkeletons = new Skeleton[this._KinectSensorOne.SkeletonStream.FrameSkeletonArrayLength];
+                    SkeletonViewerElement.KinectSensorOne = this.KinectSensorOne;
                 }
             }
         }

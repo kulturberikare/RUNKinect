@@ -1,17 +1,21 @@
 ﻿<Window x:Class="KinectSystem.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:c="clr-namespace:KinectSystem"        
+        mc:Ignorable="d" 
         Title="MainWindow" Height="960" Width="1280" >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="40*"/>
-            <RowDefinition Height="90*"/>
-            <RowDefinition Height="30*"/>
-            <RowDefinition Height="35*"/>
-            <RowDefinition Height="95*"/>
-            <RowDefinition Height="40*"/>
-            <RowDefinition Height="100*"/>            
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="160"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="270"/>            
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
@@ -53,9 +57,16 @@
                 </Viewport3D.Camera>
             </Viewport3D>
         </GroupBox>
-        <GroupBox x:Name="Camera1" Header="Camera 1" Background="AntiqueWhite" Grid.Row="2" Grid.Column="0">
-            <Image x:Name="SightImageOne"/>
-        </GroupBox>
+        <Grid Grid.Row="2" Grid.Column="0">
+            <GroupBox x:Name="Camera1" Header="Camera 1" Background="AntiqueWhite" Grid.Row="2" Grid.Column="0">
+                <Viewbox>
+                    <Grid x:Name="LayoutRootOne">
+                        <Image x:Name="SightImageOne"/>
+                        <c:SkeletonViewer x:Name="SkeletonViewerElement"/>
+                    </Grid>
+                </Viewbox>
+            </GroupBox>
+        </Grid>
         <GroupBox x:Name="Camera2" Header="Camera 2" Background="AntiqueWhite" Grid.Row="2" Grid.Column="2">
             <Image x:Name="SightImageTwo"/>
         </GroupBox>
