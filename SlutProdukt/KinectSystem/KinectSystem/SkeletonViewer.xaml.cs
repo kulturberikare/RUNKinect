@@ -25,7 +25,6 @@ namespace KinectSystem
     public partial class SkeletonViewer : UserControl
     {
         #region Member Variables
-        // private KinectSensor _Kinect; //Saknas
         private readonly Brush[] _SkeletonBrushes = new Brush[] { Brushes.Pink, Brushes.Crimson, Brushes.Indigo, Brushes.DodgerBlue, Brushes.Purple, Brushes.Green };
         private Skeleton[] _FrameSkeletons;
         #endregion Member Variables
@@ -56,18 +55,17 @@ namespace KinectSystem
                         {
                             frame.CopySkeletonDataTo(this._FrameSkeletons);
 
-                            for (int i = 0; i < this._FrameSkeletons.Length; i++)
-                            {
-                                DrawSkeleton(this._FrameSkeletons[i], this._SkeletonBrushes[i]);
+                                for (int i = 0; i < this._FrameSkeletons.Length; i++)
+                                {
+                                    DrawSkeleton(this._FrameSkeletons[i], this._SkeletonBrushes[i]);
 
-                                TrackJoint(this._FrameSkeletons[i].Joints[JointType.HandLeft], this._SkeletonBrushes[i]);
-                                TrackJoint(this._FrameSkeletons[i].Joints[JointType.HandRight], this._SkeletonBrushes[i]);
-                                TrackJoint(this._FrameSkeletons[i].Joints[JointType.HipLeft], this._SkeletonBrushes[i]);
-                                TrackJoint(this._FrameSkeletons[i].Joints[JointType.HipRight], this._SkeletonBrushes[i]);
-                                TrackJoint(this._FrameSkeletons[i].Joints[JointType.KneeLeft], this._SkeletonBrushes[i]);
-                                TrackJoint(this._FrameSkeletons[i].Joints[JointType.KneeRight], this._SkeletonBrushes[i]);
-                            }
-
+                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.HandLeft], this._SkeletonBrushes[i]);
+                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.HandRight], this._SkeletonBrushes[i]);
+                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.HipLeft], this._SkeletonBrushes[i]);
+                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.HipRight], this._SkeletonBrushes[i]);
+                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.KneeLeft], this._SkeletonBrushes[i]);
+                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.KneeRight], this._SkeletonBrushes[i]);
+                                }
                         }
                     }
                 }
@@ -118,7 +116,7 @@ namespace KinectSystem
         {
             Polyline figure = new Polyline();
 
-            figure.StrokeThickness = 8;
+            figure.StrokeThickness = 4;
             figure.Stroke = brush;
 
             for (int i = 0; i < joints.Length; i++)

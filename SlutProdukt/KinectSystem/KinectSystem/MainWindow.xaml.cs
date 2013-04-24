@@ -288,7 +288,7 @@ namespace KinectSystem
             sensor.DepthStream.Disable();
             this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorTwo.DepthStream.IsEnabled;
         }
-
+        
         private void Skeleton1_Checked(object sender, RoutedEventArgs e)
         {
             this._KinectSensorOne.SkeletonStream.Enable();
@@ -530,12 +530,13 @@ namespace KinectSystem
                 {
                     UninitializeKinectSensorOne(this._KinectSensorOne);
                     this._KinectSensorOne = null;
+                   
                 }
                 if (value != null && value.Status == KinectStatus.Connected)
                 {
                     this._KinectSensorOne = value;
                     InitializeKinectSensorOne(this._KinectSensorOne);
-                    
+                    this._KinectSensorOne.ElevationAngle = 0;            
                 }
             }
         }
@@ -559,6 +560,7 @@ namespace KinectSystem
                     {
                         this._KinectSensorTwo = value;
                         InitializeKinectSensorTwo(this._KinectSensorTwo);
+                        this._KinectSensorTwo.ElevationAngle = 0;
                     }
                 }
             }

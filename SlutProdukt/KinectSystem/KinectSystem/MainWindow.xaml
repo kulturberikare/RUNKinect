@@ -10,12 +10,12 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="80"/>
-            <RowDefinition Height="160"/>
+            <RowDefinition Height="180"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="180"/>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="270"/>            
+            <RowDefinition Height="320"/>            
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>

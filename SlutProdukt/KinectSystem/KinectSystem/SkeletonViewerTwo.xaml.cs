@@ -25,19 +25,15 @@ namespace KinectSystem
     public partial class SkeletonViewerTwo : UserControl
     {
         #region Member Variables
-        // private KinectSensor _Kinect; //Saknas
         private readonly Brush[] _SkeletonBrushes = new Brush[] { Brushes.Pink, Brushes.Crimson, Brushes.Indigo, Brushes.DodgerBlue, Brushes.Purple, Brushes.Green };
         private Skeleton[] _FrameSkeletons;
         #endregion Member Variables
 
         #region Constructor
-
         public SkeletonViewerTwo()
         {
             InitializeComponent();
-        }
-        
-
+        }        
         #endregion Constructor
 
         #region Methods
@@ -118,7 +114,7 @@ namespace KinectSystem
         {
             Polyline figure = new Polyline();
 
-            figure.StrokeThickness = 8;
+            figure.StrokeThickness = 4;
             figure.Stroke = brush;
 
             for (int i = 0; i < joints.Length; i++)
