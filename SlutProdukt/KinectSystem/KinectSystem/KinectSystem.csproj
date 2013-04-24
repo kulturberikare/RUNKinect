@@ -56,9 +56,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SkeletonViewerTwo.xaml.cs">
+      <DependentUpon>SkeletonViewerTwo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SkeletonViewer.xaml.cs">
       <DependentUpon>SkeletonViewer.xaml</DependentUpon>
     </Compile>
+    <Page Include="SkeletonViewerTwo.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

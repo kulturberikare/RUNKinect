@@ -306,7 +306,7 @@ namespace KinectSystem
         private void Skeleton2_Checked(object sender, RoutedEventArgs e)
         {
             this._KinectSensorTwo.SkeletonStream.Enable();
-            SkeletonViewerElement.KinectSensorTwo = this.KinectSensorTwo;
+            SkeletonViewerTwoElement.KinectSensorTwo = this.KinectSensorTwo;
             this.viewModel.IsSkeletonStreamEnabledTwo = this.KinectSensorTwo.SkeletonStream.IsEnabled;
         }
 
@@ -314,7 +314,7 @@ namespace KinectSystem
         {
             this._KinectSensorTwo.SkeletonStream.Disable();
             this.viewModel.IsSkeletonStreamEnabledTwo = this.KinectSensorTwo.SkeletonStream.IsEnabled;
-            SkeletonViewerElement.SkeletonsPanel.Children.Clear();
+            SkeletonViewerTwoElement.SkeletonsPanelTwo.Children.Clear();
         }
 
 

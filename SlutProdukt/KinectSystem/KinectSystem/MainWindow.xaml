@@ -67,9 +67,16 @@
                 </Viewbox>
             </GroupBox>
         </Grid>
-        <GroupBox x:Name="Camera2" Header="Camera 2" Background="AntiqueWhite" Grid.Row="2" Grid.Column="2">
-            <Image x:Name="SightImageTwo"/>
-        </GroupBox>
+        <Grid Grid.Row="2" Grid.Column="2">
+            <GroupBox x:Name="Camera2" Header="Camera 2" Background="AntiqueWhite" >
+                <Viewbox>
+                    <Grid x:Name="LayoutRootTwo">
+                        <Image x:Name="SightImageTwo" />
+                        <c:SkeletonViewerTwo x:Name="SkeletonViewerTwoElement"/>
+                    </Grid>
+                </Viewbox>
+            </GroupBox>
+        </Grid>
         <GroupBox x:Name="Pulse" Header="Pulsemonitor" Background="FloralWhite" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4"/>
         <GroupBox Header="Buttons for 3D" Background="WhiteSmoke" Grid.Row="6" Grid.Column="1">
             <StackPanel x:Name="Button3D" Grid.Row="5" Grid.Column="1" >
