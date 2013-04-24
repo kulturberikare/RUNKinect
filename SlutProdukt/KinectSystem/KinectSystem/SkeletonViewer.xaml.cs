@@ -42,7 +42,7 @@ namespace KinectSystem
 
         #region Methods
 
-        private void Kinect_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        public void Kinect_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             SkeletonsPanel.Children.Clear();
 

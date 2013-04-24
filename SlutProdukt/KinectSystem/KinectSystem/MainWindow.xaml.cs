@@ -33,7 +33,6 @@ namespace KinectSystem
         private Int32Rect _ImageRectTwo;
         private int _ImageStrideOne;
         private int _ImageStrideTwo;
-        private Skeleton[] _FrameSkeletons;
 
         private MainWindowViewModel viewModel;
 
@@ -287,8 +286,37 @@ namespace KinectSystem
         {
             sensor.DepthFrameReady -= Kinect_DepthFrameReadyTwo;
             sensor.DepthStream.Disable();
-            this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorOne.DepthStream.IsEnabled;
+            this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorTwo.DepthStream.IsEnabled;
         }
+
+        private void Skeleton1_Checked(object sender, RoutedEventArgs e)
+        {
+            this._KinectSensorOne.SkeletonStream.Enable();
+            SkeletonViewerElement.KinectSensorOne = this.KinectSensorOne;
+            this.viewModel.IsSkeletonStreamEnabledOne = this.KinectSensorOne.SkeletonStream.IsEnabled;
+        }
+
+        private void Skeleton1_UnChecked(object sender, RoutedEventArgs e)
+        {
+            this._KinectSensorOne.SkeletonStream.Disable();
+            this.viewModel.IsSkeletonStreamEnabledOne = this.KinectSensorOne.SkeletonStream.IsEnabled;
+            SkeletonViewerElement.SkeletonsPanel.Children.Clear();
+        }
+
+        private void Skeleton2_Checked(object sender, RoutedEventArgs e)
+        {
+            this._KinectSensorTwo.SkeletonStream.Enable();
+            SkeletonViewerElement.KinectSensorTwo = this.KinectSensorTwo;
+            this.viewModel.IsSkeletonStreamEnabledTwo = this.KinectSensorTwo.SkeletonStream.IsEnabled;
+        }
+
+        private void Skeleton2_UnChecked(object sender, RoutedEventArgs e)
+        {
+            this._KinectSensorTwo.SkeletonStream.Disable();
+            this.viewModel.IsSkeletonStreamEnabledTwo = this.KinectSensorTwo.SkeletonStream.IsEnabled;
+            SkeletonViewerElement.SkeletonsPanel.Children.Clear();
+        }
+
 
         private void InitializeKinectSensorOne(KinectSensor sensor)
         {
@@ -487,16 +515,6 @@ namespace KinectSystem
             }
         }
 
-        private void Skeleton1_Checked(object sender, RoutedEventArgs e)
-        {
-            return;
-        }
-
-        private void Skeleton2_Checked(object sender, RoutedEventArgs e)
-        {
-            return;
-        }
-
         #endregion Methods
 
         #region Properties
@@ -517,9 +535,7 @@ namespace KinectSystem
                 {
                     this._KinectSensorOne = value;
                     InitializeKinectSensorOne(this._KinectSensorOne);
-                    this._KinectSensorOne.SkeletonStream.Enable();
-                    this._FrameSkeletons = new Skeleton[this._KinectSensorOne.SkeletonStream.FrameSkeletonArrayLength];
-                    SkeletonViewerElement.KinectSensorOne = this.KinectSensorOne;
+                    
                 }
             }
         }
