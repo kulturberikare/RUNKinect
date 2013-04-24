@@ -23,7 +23,7 @@ namespace ReadFromFileKR
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    
+
     public partial class MainWindow : Window
     {
         #region memberVariables
@@ -38,70 +38,65 @@ namespace ReadFromFileKR
         public MainWindow()
         {
             InitializeComponent();
-            CreateFile();
+            //CreateFile();
+            ReadFromFile("RightKnee"); //Såhär kallas funktionen med det aktuella filnamnet.
         }
         #endregion construction
 
         #region methods
-        //Skapar en textfil som används till test
-        private void CreateFile()
-        {
-            if (!File.Exists("fileName.txt"))
-            {
-                StreamWriter file = new StreamWriter("fileName.txt");
-
-                file.WriteLine("45:" + "1" + ";" + "46:" + "2" + ";" + "47:" + "3" + ";" + "10:" + "4" + ";");
-
-                file.Close();
-                ReadFromFile("fileName");
-            }
-            else
-            {
-                using (StreamWriter file = new StreamWriter("fileName.txt", true))
-                {
-                    file.Close();
-                    ReadFromFile("fileName");
-                }
-            }
-        }
-
         //Läser in värdena som finns i filen och plottar sedan mha showLineSeries
         private void ReadFromFile(string JointName)
         {
-            System.IO.StreamReader file = new System.IO.StreamReader(JointName + ".txt");
-
-            while ((line = file.ReadLine()) != null)
+            try
             {
-                for (int i = 0; i < line.Length; i++)
+                if (File.Exists(JointName + ".txt"))
                 {
-                    //Lägger in objekt i number allt eftersom strängen gås igenom. Slutar när ; eller : påträffas
-                    if (Convert.ToString(line[i]) != ":" && Convert.ToString(line[i]) != ";")
+                    System.IO.StreamReader file = new System.IO.StreamReader(JointName + ".txt");
+
+                    while ((line = file.ReadLine()) != null)
                     {
-                        number += line[i];
+                        for (int i = 0; i < line.Length; i++)
+                        {
+                            //Lägger in objekt i number allt eftersom strängen gås igenom. Slutar när ; eller : påträffas
+                            if (Convert.ToString(line[i]) != ":" && Convert.ToString(line[i]) != ";")
+                            {
+                                number += line[i];
+                            }
+                            //När det finns ett ":" läggs strängen med siffror in i angle efter det gjorts om till int
+                            else if (Convert.ToString(line[i]) == ":") //Första variabeln
+                            {
+                                angle = Convert.ToInt32(number);
+                                number = null;
+                            }
+                            //Samma fast andra variablen. Lägger också till angle och timestamp i valueList
+                            else if (Convert.ToString(line[i]) == ";") //den andra variabeln
+                            {
+                                timestamp = Convert.ToInt32(number);
+                                number = null;
+                                showLineSeries();
+                            }
+                            else
+                            {
+                                //Borde vara felhantering istället - någon form av exeption
+                                MessageBox.Show("Något fel har inträffat");
+                            }
+                        }
                     }
-                    //När det finns ett ":" läggs strängen med siffror in i angle efter det gjorts om till int
-                    else if (Convert.ToString(line[i]) == ":") //Första variabeln
-                    {
-                        angle = Convert.ToInt32(number);
-                        number = null;
-                    }
-                    //Samma fast andra variablen. Lägger också till angle och timestamp i valueList
-                    else if (Convert.ToString(line[i]) == ";") //den andra variabeln
-                    {
-                        timestamp = Convert.ToInt32(number);
-                        number = null;
-                        showLineSeries();
-                    }
-                    else
-                    {
-                        //Borde vara felhantering istället - någon form av exeption
-                        MessageBox.Show("Något fel har inträffat");
-                    }
+                    file.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Filen finns inte");
                 }
             }
-            file.Close();
+
+            catch
+            {
+                //Borde kanske vara något annat vettigare.
+                MessageBox.Show("FEL");
+            }
         }
-    
+
         //Lägger till timestamp och angle i valueList som sedan ritas.
         private void showLineSeries()
         {
