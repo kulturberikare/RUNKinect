@@ -3,11 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <StackPanel>
-            <TextBlock x:Name="FootDistance" FontFamily="Arial Black" FontSize="48" HorizontalAlignment="Left"/>
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Image x:Name="ColorImageElement" Height="480" Width="640"/>
+        </StackPanel>
+        <StackPanel VerticalAlignment="Bottom">
+            <TextBlock x:Name="FootDistance" FontFamily="Arial Black" FontSize="48" TextAlignment="Left"/>    
         </StackPanel>
         <StackPanel>
             <TextBlock x:Name="TestText" FontFamily="Arial Black" FontSize="48" HorizontalAlignment="Right"/>
+        </StackPanel>
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock x:Name="ExtraTest" FontFamily="Arial Black" FontSize="48" TextAlignment="Center"/>
         </StackPanel>
     </Grid>
 </Window>
