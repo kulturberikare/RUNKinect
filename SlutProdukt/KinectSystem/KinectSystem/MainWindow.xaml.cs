@@ -223,7 +223,7 @@ namespace KinectSystem
         {
             sensor.ColorFrameReady -= Kinect_ColorFrameReadyTwo;
             sensor.ColorStream.Disable();
-            this.viewModel.IsColorStreamEnabledTwo = this.KinectSensorOne.ColorStream.IsEnabled;
+            this.viewModel.IsColorStreamEnabledTwo = this.KinectSensorTwo.ColorStream.IsEnabled;
         }
 
         private void StartDepthImageOne(object sender, RoutedEventArgs e)
