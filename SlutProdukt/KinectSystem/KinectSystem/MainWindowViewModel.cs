@@ -33,6 +33,7 @@ namespace KinectSystem
         private bool canStopValueTwo;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion Member Variables
 
         #region Methods
@@ -349,6 +350,7 @@ namespace KinectSystem
                 }
             }
         }
+
         #endregion Properties
     }
 }

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Forms;
+using System.IO;
 
 using Microsoft.Kinect;
 using System.Windows.Media.Media3D;
@@ -33,6 +34,12 @@ namespace KinectSystem
         private Int32Rect _ImageRectTwo;
         private int _ImageStrideOne;
         private int _ImageStrideTwo;
+
+        string line;
+        string number = null;
+        int angle = 0;
+        int timestamp = 0;
+        List<KeyValuePair<int, int>> valueList = new List<KeyValuePair<int, int>>();
 
         private MainWindowViewModel viewModel;
 
@@ -317,7 +324,6 @@ namespace KinectSystem
             SkeletonViewerTwoElement.SkeletonsPanelTwo.Children.Clear();
         }
 
-
         private void InitializeKinectSensorOne(KinectSensor sensor)
         {
             if (sensor != null)
@@ -454,15 +460,81 @@ namespace KinectSystem
         private void BrowseButton1_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog Info1 = new OpenFileDialog();
-            Info1.InitialDirectory = "c:\\";
-            Info1.Filter = "(*.txt)|*.txt|(*.png)|*.png|(*.jpg)|*.jpg";
+            Info1.InitialDirectory = "SlutProdukt/KinectSystem/bin";
+            Info1.Filter = "(*.txt)|*.txt";
             Info1.RestoreDirectory = true;
 
             if (Info1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string file = Info1.FileName;
                 InfoLabel1.Content = file;
+                System.Windows.MessageBox.Show(file);
+                ReadFromFile(file);
             }
+        }
+
+        private void ReadFromFile(string JointName)
+        {
+            try
+            {
+                System.Windows.MessageBox.Show(JointName);
+                if (File.Exists(JointName))
+                {
+                    System.IO.StreamReader file = new System.IO.StreamReader(JointName);
+
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        //System.Windows.MessageBox.Show("Hej");
+                        for (int i = 0; i < line.Length; i++)
+                        {
+                            //Lägger in objekt i number allt eftersom strängen gås igenom. Slutar när ; eller : påträffas
+                            if (Convert.ToString(line[i]) != ":" && Convert.ToString(line[i]) != ";")
+                            {
+                                //System.Windows.MessageBox.Show("Hej2");
+                                number += line[i];
+                            }
+                            //När det finns ett ":" läggs strängen med siffror in i angle efter det gjorts om till int
+                            else if (Convert.ToString(line[i]) == ":") //Första variabeln
+                            {
+                                //System.Windows.MessageBox.Show("Hej3");
+                                angle = Convert.ToInt32(number);
+                                number = null;
+                            }
+                            //Samma fast andra variablen. Lägger också till angle och timestamp i valueList
+                            else if (Convert.ToString(line[i]) == ";") //den andra variabeln
+                            {
+                                //System.Windows.MessageBox.Show("Hej4");
+                                timestamp = Convert.ToInt32(number);
+                                number = null;
+                                showLineSeries();
+                            }
+                            else
+                            {
+                                //Borde vara felhantering istället - någon form av exeption
+                                System.Windows.MessageBox.Show("Något fel har inträffat");
+                            }
+                        }
+                    }
+                    file.Close();
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("Filen finns inte");
+                }
+            }
+
+            catch
+            {
+                //Borde kanske vara något annat vettigare.
+                System.Windows.MessageBox.Show("FEL");
+            }
+        }
+
+        //Lägger till timestamp och angle i valueList som sedan ritas.
+        private void showLineSeries()
+        {
+            valueList.Add(new KeyValuePair<int, int>(timestamp, angle));
+            lineChart.DataContext = valueList;
         }
 
         private void BrowseButton2_Click(object sender, RoutedEventArgs e)
@@ -518,6 +590,7 @@ namespace KinectSystem
         #endregion Methods
 
         #region Properties
+
         public KinectSensor KinectSensorOne
         {
             get
