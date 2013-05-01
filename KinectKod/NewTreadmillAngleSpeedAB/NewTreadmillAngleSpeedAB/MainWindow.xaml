@@ -1,19 +1,23 @@
 ﻿<Window x:Class="NewTreadmillAngleSpeedAB.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Image x:Name="ColorImageElement" Height="480" Width="640"/>
-        </StackPanel>
-        <StackPanel VerticalAlignment="Bottom">
-            <TextBlock x:Name="FootDistance" FontFamily="Arial Black" FontSize="48" TextAlignment="Left"/>    
-        </StackPanel>
-        <StackPanel>
-            <TextBlock x:Name="TestText" FontFamily="Arial Black" FontSize="48" HorizontalAlignment="Right"/>
-        </StackPanel>
-        <StackPanel VerticalAlignment="Center">
-            <TextBlock x:Name="ExtraTest" FontFamily="Arial Black" FontSize="48" TextAlignment="Center"/>
-        </StackPanel>
-    </Grid>
+        Title="MainWindow" Height="1080" Width="1920">
+    <Viewbox>
+        <Grid>
+            <Image x:Name="ColorImageElement" Height="1080" Width="1920"/>
+                <Canvas x:Name="FootStartEnd" Height="1080" Width="1920">
+                    <Ellipse x:Name="FootFront" Fill="ForestGreen" Height="25" Width="25"/> 
+                    <Ellipse x:Name="FootBack" Fill="Crimson" Height="25" Width="25"/>
+                </Canvas>
+            <!--<StackPanel VerticalAlignment="Bottom">
+                <TextBlock x:Name="FootDistance" FontFamily="Arial Black" FontSize="48" TextAlignment="Left"/>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Top">
+                <TextBlock x:Name="TestText" FontFamily="Arial Black" FontSize="48" HorizontalAlignment="Right"/>
+            </StackPanel>-->
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock x:Name="ExtraTest" FontFamily="Arial Black" FontSize="48" TextAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Viewbox>
 </Window>

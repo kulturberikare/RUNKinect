@@ -43,6 +43,7 @@ namespace NewTreadmillAngleSpeedAB
         private double angle;
         private double maxFeetDistance = 0;
         private double feetDistance;
+        private double prevFeetDistance;
 
         #endregion Member Variables
 
@@ -116,21 +117,35 @@ namespace NewTreadmillAngleSpeedAB
                             Joint leftFoot = currentskeleton.Joints[JointType.FootLeft];
 
                             feetDistance = GetJointDistance(rightFoot, leftFoot);
+                            prevFeetDistance = GetJointDistance(prevRightFoot, prevLeftFoot);
 
-                            FootDistance.Text = String.Format("{0} \n {1} maxavstånd", Math.Round(feetDistance, 2),
-                                                                                       Math.Round(maxFeetDistance, 2));
+                            //FootDistance.Text = String.Format("{0} \n {1} maxavstånd", Math.Round(feetDistance, 2),
+                            //                                                           Math.Round(maxFeetDistance, 2));
 
-                            if (feetDistance < 0.4 &&
-                                rightFoot.Position.X > prevRightFoot.Position.X &&
+                            if (feetDistance < 0.5 &&
+                                feetDistance < prevFeetDistance &&
                                 rightFoot.Position.X < leftFoot.Position.X && // Högerfoten närmast främre änden av löpbandet
                                 startTime == DateTime.MinValue)
                             {
                                 startTime = DateTime.Now;
                                 startPoint = prevRightFoot;
+
+                                ColorImagePoint point = this._Kinect.CoordinateMapper.MapSkeletonPointToColorPoint(startPoint.Position, ColorImageFormat.RgbResolution640x480Fps30);
+
+                                point.X = (int)((point.X * ColorImageElement.ActualWidth /
+                                                  this._Kinect.ColorStream.FrameWidth) -
+                                                  (FootFront.ActualWidth / 2.0));
+
+                                point.Y = (int)((point.Y * ColorImageElement.ActualHeight /
+                                                  this._Kinect.ColorStream.FrameHeight) -
+                                                  (FootFront.ActualHeight / 2.0));
+
+                                Canvas.SetLeft(FootFront, point.X);
+                                Canvas.SetTop(FootFront, point.Y);
                             }
 
                             if (feetDistance > 0.2 &&
-                                rightFoot.Position.X > prevRightFoot.Position.X &&
+                                feetDistance > prevFeetDistance &&
                                 rightFoot.Position.X > leftFoot.Position.X &&                               
                                 startTime != DateTime.MinValue)
                             {
@@ -148,6 +163,12 @@ namespace NewTreadmillAngleSpeedAB
                                     angle = TreadmillAngle(startPoint, endPoint);
                                     angleArray[index] = angle;
                                     index++;
+
+                                    //using (System.IO.StreamWriter file = new System.IO.StreamWriter
+                                    //      (@"C:\Users\Alex\Documents\GitHub\RUNKinect\KinectKod\NewTreadmillAngleSpeedAB\DistanceTime.txt", true))
+                                    //{
+                                    //    file.WriteLine(rightFootDistance.ToString() + " " + time.ToString());
+                                    //}
                                 }
 
                                 if (index == 9)
@@ -163,9 +184,9 @@ namespace NewTreadmillAngleSpeedAB
                                     maxFeetDistance = feetDistance;
                                 }
 
-                                TestText.Text = String.Format("{0} m/s \n {1} s \n {2} avstånd(m) \n {3} mätningar har gjorts \n {4} km/h medel",
-                                                              Math.Round(velocity, 2), Math.Round(time, 2), Math.Round(rightFootDistance, 2),
-                                                              index, meanVelocity);
+                                //TestText.Text = String.Format("{0} m/s \n {1} s \n {2} avstånd(m) \n {3} mätningar har gjorts \n {4} km/h medel",
+                                //                              Math.Round(velocity, 2), Math.Round(time, 2), Math.Round(rightFootDistance, 2),
+                                //                              index, meanVelocity);
 
                                 startTime = DateTime.MinValue; // Nu är vi klara med StartTime. Förbereder för nästa mätning.                               
                             }
