@@ -209,12 +209,15 @@
             </StackPanel>
         </GroupBox>
         <GroupBox x:Name="AngleChart" Header="AngleChart" Background="Wheat" Grid.Row="5" Grid.Column="3">
-            <chartingToolkit:Chart Name="lineChart">
-                <chartingToolkit:LineSeries DependentValuePath="Value"
+            <Grid  Margin="0,0,0,4">
+                <chartingToolkit:Chart Name="lineChart">
+                    <chartingToolkit:LineSeries DependentValuePath="value"
                                         IndependentValuePath="Key" 
                                         ItemsSource="{Binding}"
-                                        IsSelectionEnabled="True"/>
-            </chartingToolkit:Chart>
+                                        IsSelectionEnabled="True">
+                    </chartingToolkit:LineSeries>
+                </chartingToolkit:Chart>
+            </Grid>
         </GroupBox>
         <GroupBox x:Name="Infoset2" Header="Search information 2" Background="LightBlue" Grid.Row="6" Grid.Column="3">
             <StackPanel >

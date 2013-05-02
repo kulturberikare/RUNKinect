@@ -130,7 +130,7 @@ namespace KinectSystem
         private Point GetJointPoint(Joint joint)
         {
 
-            DepthImagePoint point = this.KinectSensorTwo.MapSkeletonPointToDepth(joint.Position, this.KinectSensorTwo.DepthStream.Format);
+            DepthImagePoint point = KinectSensorTwo.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position, this.KinectSensorTwo.DepthStream.Format);
             point.X *= (int)this.LayoutRootTwo.ActualWidth / KinectSensorTwo.DepthStream.FrameWidth;
             point.Y *= (int)this.LayoutRootTwo.ActualHeight / KinectSensorTwo.DepthStream.FrameHeight;
 
