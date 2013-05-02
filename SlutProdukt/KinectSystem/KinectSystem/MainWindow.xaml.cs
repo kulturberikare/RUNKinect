@@ -482,28 +482,24 @@ namespace KinectSystem
                 {
                     System.IO.StreamReader file = new System.IO.StreamReader(JointName);
 
-                    while ((line = file.ReadLine()) != null)
+                    while ((line = file.ReadLine()) !=null)
                     {
-                        //System.Windows.MessageBox.Show("Hej");
                         for (int i = 0; i < line.Length; i++)
                         {
                             //Lägger in objekt i number allt eftersom strängen gås igenom. Slutar när ; eller : påträffas
                             if (Convert.ToString(line[i]) != ":" && Convert.ToString(line[i]) != ";")
                             {
-                                //System.Windows.MessageBox.Show("Hej2");
                                 number += line[i];
                             }
                             //När det finns ett ":" läggs strängen med siffror in i angle efter det gjorts om till int
                             else if (Convert.ToString(line[i]) == ":") //Första variabeln
                             {
-                                //System.Windows.MessageBox.Show("Hej3");
                                 angle = Convert.ToInt32(number);
                                 number = null;
                             }
                             //Samma fast andra variablen. Lägger också till angle och timestamp i valueList
                             else if (Convert.ToString(line[i]) == ";") //den andra variabeln
                             {
-                                //System.Windows.MessageBox.Show("Hej4");
                                 timestamp = Convert.ToInt32(number);
                                 number = null;
                                 showLineSeries();
@@ -535,6 +531,7 @@ namespace KinectSystem
         {
             valueList.Add(new KeyValuePair<int, int>(timestamp, angle));
             lineChart.DataContext = valueList;
+            //System.Windows.MessageBox.Show("Hej6");
         }
 
         private void BrowseButton2_Click(object sender, RoutedEventArgs e)
