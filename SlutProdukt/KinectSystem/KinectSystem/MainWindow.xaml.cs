@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Forms;
 using System.IO;
-
+using System.Windows.Controls.DataVisualization.Charting;
 using Microsoft.Kinect;
 using System.Windows.Media.Media3D;
 
@@ -529,8 +529,17 @@ namespace KinectSystem
         {
             valueList.Add(new KeyValuePair<int, int>(timestamp, angle));
             lineChart.DataContext = valueList;
+            AddSeries();
         }
-
+        private void AddSeries()
+        {
+            var series = new LineSeries();
+            series.SetBinding(LineSeries.ItemsSourceProperty, new System.Windows.Data.Binding());
+            series.DataContext = valueList;
+            series.DependentValueBinding = new System.Windows.Data.Binding("Value");
+            series.IndependentValueBinding = new System.Windows.Data.Binding("Key");
+            lineChart.Series.Add(series);
+        }
         private void BrowseButton2_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog Info2 = new OpenFileDialog();
