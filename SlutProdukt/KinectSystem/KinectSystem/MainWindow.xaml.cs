@@ -479,31 +479,25 @@ namespace KinectSystem
                 System.Windows.MessageBox.Show(JointName);
                 if (File.Exists(JointName))
                 {
-                    //System.Windows.MessageBox.Show("Hej");
                     System.IO.StreamReader file = new System.IO.StreamReader(JointName);
-                    //System.Windows.MessageBox.Show("Hej1");
                     while ((line = file.ReadLine()) !=null)
                     {
-                        //System.Windows.MessageBox.Show("Hej2");
                         for (int i = 0; i < line.Length; i++)
                         {
                             //Lägger in objekt i number allt eftersom strängen gås igenom. Slutar när ; eller : påträffas
                             if (Convert.ToString(line[i]) != ":" && Convert.ToString(line[i]) != ";")
                             {
-                                //System.Windows.MessageBox.Show("Hej3");
                                 number += line[i];
                             }
                             //När det finns ett ":" läggs strängen med siffror in i angle efter det gjorts om till int
                             else if (Convert.ToString(line[i]) == ":") //Första variabeln
                             {
-                                //System.Windows.MessageBox.Show("Hej4");
                                 angle = Convert.ToInt32(number);
                                 number = null;
                             }
                             //Samma fast andra variablen. Lägger också till angle och timestamp i valueList
                             else if (Convert.ToString(line[i]) == ";") //den andra variabeln
                             {
-                                //System.Windows.MessageBox.Show("Hej5");
                                 timestamp = Convert.ToInt32(number);
                                 number = null;
                                 showLineSeries();
@@ -515,7 +509,6 @@ namespace KinectSystem
                             }
                         }
                     }
-                    //System.Windows.MessageBox.Show("Hej6");
                     file.Close();
                 }
                 else
@@ -534,11 +527,8 @@ namespace KinectSystem
         //Lägger till timestamp och angle i valueList som sedan ritas.
         private void showLineSeries()
         {
-            //System.Windows.MessageBox.Show("Hej7");
             valueList.Add(new KeyValuePair<int, int>(timestamp, angle));
-            //System.Windows.MessageBox.Show("Hej8");
             lineChart.DataContext = valueList;
-            //System.Windows.MessageBox.Show("Hej9");
         }
 
         private void BrowseButton2_Click(object sender, RoutedEventArgs e)
