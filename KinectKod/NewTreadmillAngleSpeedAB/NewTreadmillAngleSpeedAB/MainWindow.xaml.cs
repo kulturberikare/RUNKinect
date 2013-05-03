@@ -45,12 +45,17 @@ namespace NewTreadmillAngleSpeedAB
         private double feetDistance;
         private double prevFeetDistance;
 
+        private readonly Brush[] _SkeletonBrushes;
+
         #endregion Member Variables
 
         #region Constructor
         public MainWindow()
         {
             InitializeComponent();
+
+            this._SkeletonBrushes = new[] { Brushes.Black, Brushes.Crimson, Brushes.Indigo,
+                                             Brushes.DodgerBlue, Brushes.Purple, Brushes.Pink};
 
             KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
             this.Kinect = KinectSensor.KinectSensors.FirstOrDefault(x => x.Status == KinectStatus.Connected);
@@ -107,12 +112,29 @@ namespace NewTreadmillAngleSpeedAB
                     Skeleton currentskeleton;
                     frame.CopySkeletonDataTo(this._CurrentFrameSkeletons);
 
+                    // Ritgrejer
+                    Polyline figure;
+                    Brush userBrush;
+                    LayoutRoot.Children.Clear();
+                    // Ritgrejer
                     for (int i = 0; i < this._CurrentFrameSkeletons.Length; i++)
                     {
                         currentskeleton = this._CurrentFrameSkeletons[i];
 
                         if (currentskeleton.TrackingState == SkeletonTrackingState.Tracked)
                         {
+                            // Rita!
+
+
+                            userBrush = this._SkeletonBrushes[i % this._SkeletonBrushes.Length];
+
+                            figure =  CreateFigure(currentskeleton, userBrush, new [] { JointType.HipLeft, JointType.KneeLeft,
+                                             JointType.AnkleLeft, JointType.FootLeft});
+
+                            figure = CreateFigure(currentskeleton, userBrush, new [] { JointType.HipRight, JointType.KneeRight,
+                                             JointType.AnkleRight, JointType.FootRight});                            
+                            // Rita!
+
                             Joint rightFoot = currentskeleton.Joints[JointType.FootRight];
                             Joint leftFoot = currentskeleton.Joints[JointType.FootLeft];
 
@@ -284,6 +306,32 @@ namespace NewTreadmillAngleSpeedAB
             {
                 this._Kinect.ElevationAngle = angleValue;
             }
+        }
+
+        // Rita
+        private Polyline CreateFigure(Skeleton skeleton, Brush brush, JointType[] joints)
+        {
+            Polyline figure        = new Polyline();
+            figure.StrokeThickness = 8;
+            figure.Stroke          = brush;
+
+            for(int i = 0; i < joints.Length; i++)
+            {
+                figure.Points.Add(GetJointPoint(skeleton.Joints[joints[i]]));
+            }
+
+            return figure;
+        }
+
+        private Point GetJointPoint(Joint joint)
+        {
+            DepthImagePoint point = this._Kinect.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position,
+                                                                         this._Kinect.DepthStream.Format);
+
+            point.X *= (int)this.LayoutRoot.ActualWidth / this._Kinect.DepthStream.FrameWidth;
+            point.Y *= (int)this.LayoutRoot.ActualHeight / this._Kinect.DepthStream.FrameHeight;
+
+            return new Point(point.X, point.Y);
         }
 
         #endregion Helper Methods

@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="1080" Width="1920">
     <Viewbox>
-        <Grid>
+        <Grid x:Name="LayoutRoot" Height="1080" Width="1920">
+            <Polyline x:Name="CrayonElement" Stroke="Azure" StrokeThickness="3"/>
             <Image x:Name="ColorImageElement" Height="1080" Width="1920"/>
                 <Canvas x:Name="FootStartEnd" Height="1080" Width="1920">
                     <Ellipse x:Name="FootFront" Fill="ForestGreen" Height="25" Width="25"/> 
