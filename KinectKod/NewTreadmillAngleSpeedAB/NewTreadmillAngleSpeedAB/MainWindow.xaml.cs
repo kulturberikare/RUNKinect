@@ -119,6 +119,13 @@ namespace NewTreadmillAngleSpeedAB
                             feetDistance = GetJointDistance(rightFoot, leftFoot);
                             prevFeetDistance = GetJointDistance(prevRightFoot, prevLeftFoot);
 
+                            //using (System.IO.StreamWriter file = new System.IO.StreamWriter
+                            //       (@"C:\Users\Alex\Documents\GitHub\RUNKinect\KinectKod\NewTreadmillAngleSpeedAB\FeetDistance12.txt", true))
+                            //{
+                            //    file.WriteLine(feetDistance.ToString());
+                            //    file.Close();
+                            //}
+
                             //FootDistance.Text = String.Format("{0} \n {1} maxavstånd", Math.Round(feetDistance, 2),
                             //                                                           Math.Round(maxFeetDistance, 2));
 
@@ -130,6 +137,7 @@ namespace NewTreadmillAngleSpeedAB
                                 startTime = DateTime.Now;
                                 startPoint = prevRightFoot;
 
+                                // Rita ut startPoint som en prick
                                 ColorImagePoint point = this._Kinect.CoordinateMapper.MapSkeletonPointToColorPoint(startPoint.Position, ColorImageFormat.RgbResolution640x480Fps30);
 
                                 point.X = (int)((point.X * ColorImageElement.ActualWidth /
@@ -142,6 +150,13 @@ namespace NewTreadmillAngleSpeedAB
 
                                 Canvas.SetLeft(FootFront, point.X);
                                 Canvas.SetTop(FootFront, point.Y);
+                                // Slut
+                            }
+
+                            if (startTime != DateTime.Now &&
+                                (DateTime.Now - startTime).Ticks / 10000000 > 0.75)
+                            {
+                                startTime = DateTime.MinValue;
                             }
 
                             if (feetDistance > 0.2 &&
@@ -155,6 +170,21 @@ namespace NewTreadmillAngleSpeedAB
                                 Joint endPoint = rightFoot;
                                 float rightFootDistance = GetJointDistance(startPoint, endPoint);
 
+                                // Rita ut endPoint som en prick
+                                ColorImagePoint point = this._Kinect.CoordinateMapper.MapSkeletonPointToColorPoint(endPoint.Position, ColorImageFormat.RgbResolution640x480Fps30);
+
+                                point.X = (int)((point.X * ColorImageElement.ActualWidth /
+                                                  this._Kinect.ColorStream.FrameWidth) -
+                                                  (FootFront.ActualWidth / 2.0));
+
+                                point.Y = (int)((point.Y * ColorImageElement.ActualHeight /
+                                                  this._Kinect.ColorStream.FrameHeight) -
+                                                  (FootFront.ActualHeight / 2.0));
+
+                                Canvas.SetLeft(FootBack, point.X);
+                                Canvas.SetTop(FootBack, point.Y);
+                                // Slut
+
                                 if (rightFootDistance > 0.12 && rightFootDistance < 0.4)
                                 {
                                     velocity = TreadmillSpeed(rightFootDistance, time);
@@ -163,12 +193,6 @@ namespace NewTreadmillAngleSpeedAB
                                     angle = TreadmillAngle(startPoint, endPoint);
                                     angleArray[index] = angle;
                                     index++;
-
-                                    //using (System.IO.StreamWriter file = new System.IO.StreamWriter
-                                    //      (@"C:\Users\Alex\Documents\GitHub\RUNKinect\KinectKod\NewTreadmillAngleSpeedAB\DistanceTime.txt", true))
-                                    //{
-                                    //    file.WriteLine(rightFootDistance.ToString() + " " + time.ToString());
-                                    //}
                                 }
 
                                 if (index == 9)
