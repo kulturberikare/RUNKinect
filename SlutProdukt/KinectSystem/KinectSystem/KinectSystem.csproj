@@ -58,12 +58,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AngularHelpingTools.cs" />
+    <Compile Include="Circle.cs" />
+    <Compile Include="Cube.cs" />
+    <Compile Include="Cylinder.cs" />
+    <Compile Include="Rectangle.cs" />
     <Compile Include="SkeletonViewerTwo.xaml.cs">
       <DependentUpon>SkeletonViewerTwo.xaml</DependentUpon>
     </Compile>
     <Compile Include="SkeletonViewer.xaml.cs">
       <DependentUpon>SkeletonViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Sphere.cs" />
+    <Compile Include="Triangle.cs" />
     <Page Include="SkeletonViewerTwo.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
