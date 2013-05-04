@@ -205,8 +205,19 @@ namespace KinectSystem
             {
                 using (StreamWriter file = new StreamWriter("LeftKnee.txt", true))
                 {
-                    file.WriteLine(Convert.ToString(Math.Round(angle, 0)) + ":" + Convert.ToString(count) + ";");
-                    file.Close();
+                    string _angle = Convert.ToString(Math.Round(angle));
+
+                    if (_angle != "NaN")
+                    {
+                        file.WriteLine(_angle + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
+
+                    else
+                    {
+                        file.WriteLine("0" + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
                 }
             }
         }
@@ -223,8 +234,19 @@ namespace KinectSystem
             {
                 using (StreamWriter file = new StreamWriter("RightKnee.txt", true))
                 {
-                    file.WriteLine(Convert.ToString(Math.Round(angle, 0)) + ":" + Convert.ToString(count) + ";");
-                    file.Close();
+                    string _angle = Convert.ToString(Math.Round(angle));
+
+                    if (_angle != "NaN")
+                    {
+                        file.WriteLine(_angle + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
+
+                    else
+                    {
+                        file.WriteLine("0" + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
                 }
             }
         }
@@ -241,8 +263,19 @@ namespace KinectSystem
             {
                 using (StreamWriter file = new StreamWriter("RightAnkle.txt", true))
                 {
-                    file.WriteLine(Convert.ToString(Math.Round(angle, 0)) + ":" + Convert.ToString(count) + ";");
-                    file.Close();
+                    string _angle = Convert.ToString(Math.Round(angle));
+
+                    if (_angle != "NaN")
+                    {
+                        file.WriteLine(_angle + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
+
+                    else
+                    {
+                        file.WriteLine("0" + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
                 }
             }
         }
@@ -259,8 +292,19 @@ namespace KinectSystem
             {
                 using (StreamWriter file = new StreamWriter("LeftAnkle.txt", true))
                 {
-                    file.WriteLine(Convert.ToString(Math.Round(angle, 0)) + ":" + Convert.ToString(count) + ";");
-                    file.Close();
+                    string _angle = Convert.ToString(Math.Round(angle));
+
+                    if (_angle != "NaN")
+                    {
+                        file.WriteLine(_angle + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
+
+                    else
+                    {
+                        file.WriteLine("0" + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
                 }
             }
         }
@@ -277,8 +321,19 @@ namespace KinectSystem
             {
                 using (StreamWriter file = new StreamWriter("Hip.txt", true))
                 {
-                    file.WriteLine(Convert.ToString(Math.Round(angle, 0)) + ":" + Convert.ToString(count) + ";");
-                    file.Close();
+                    string _angle = Convert.ToString(Math.Round(angle));
+
+                    if (_angle != "NaN")
+                    {
+                        file.WriteLine(_angle + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
+
+                    else
+                    {
+                        file.WriteLine("0" + ":" + Convert.ToString(count) + ";");
+                        file.Close();
+                    }
                 }
             }
         }
