@@ -298,7 +298,7 @@ namespace KinectSystem
             sensor.DepthStream.Disable();
             this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorTwo.DepthStream.IsEnabled;
         }
-        
+
         private void Skeleton1_Checked(object sender, RoutedEventArgs e)
         {
             this._KinectSensorOne.SkeletonStream.Enable();
@@ -332,7 +332,38 @@ namespace KinectSystem
             if (sensor != null)
             {
                 SightImageOne.Source = this._ImageOne;
+                deletePrevFiles();
                 sensor.Start();
+            }
+        }
+
+        //Plockar bort textfiler med vinklar från tidigare körningar. Kallas när kinectsensor 1 initialiseras
+        private void deletePrevFiles()
+        {
+            if (File.Exists("Hip.txt"))
+            {
+                StreamWriter file = new StreamWriter("Hip.txt");
+                file.Close();
+            }
+            if (File.Exists("RightAnkle.txt"))
+            {
+                StreamWriter file = new StreamWriter("RightAnkle.txt");
+                file.Close();
+            }
+            if (File.Exists("LeftAnkle.txt"))
+            {
+                StreamWriter file = new StreamWriter("LeftAnkle.txt");
+                file.Close();
+            }
+            if (File.Exists("LeftKnee.txt"))
+            {
+                StreamWriter file = new StreamWriter("LeftKnee.txt");
+                file.Close();
+            }
+            if (File.Exists("RightKnee.txt"))
+            {
+                StreamWriter file = new StreamWriter("RightKnee.txt");
+                file.Close();
             }
         }
 
@@ -458,10 +489,10 @@ namespace KinectSystem
             }
         }
 
-
-
+        //Eventhanterare som har logiken bakom browserknappen.
         private void BrowseButton1_Click(object sender, RoutedEventArgs e)
         {
+            //Definierar i vilken mapp det ska letas i och efter vilken filtyp
             OpenFileDialog Info1 = new OpenFileDialog();
             Info1.InitialDirectory = "SlutProdukt/KinectSystem/bin";
             Info1.Filter = "(*.txt)|*.txt";
@@ -474,19 +505,19 @@ namespace KinectSystem
             {
                 string file = Info1.FileName;
                 InfoLabel1.Content = file;
-                System.Windows.MessageBox.Show(file);
                 ReadFromFile(file);
             }
         }
 
+        //Funktion som läser in tecken från en textfil och plottar dessa i en lineChart.
         private void ReadFromFile(string JointName)
         {
             try
             {
-                            if (File.Exists(JointName))
+                if (File.Exists(JointName))
                 {
                     System.IO.StreamReader file = new System.IO.StreamReader(JointName);
-                    while ((line = file.ReadLine()) !=null)
+                    while ((line = file.ReadLine()) != null)
                     {
                         for (int i = 0; i < line.Length; i++)
                         {
@@ -531,7 +562,7 @@ namespace KinectSystem
             }
         }
 
-          private void BrowseButton2_Click(object sender, RoutedEventArgs e)
+        private void BrowseButton2_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog Info2 = new OpenFileDialog();
             Info2.InitialDirectory = "c:\\";
@@ -597,13 +628,13 @@ namespace KinectSystem
                 {
                     UninitializeKinectSensorOne(this._KinectSensorOne);
                     this._KinectSensorOne = null;
-                   
+
                 }
                 if (value != null && value.Status == KinectStatus.Connected)
                 {
                     this._KinectSensorOne = value;
                     InitializeKinectSensorOne(this._KinectSensorOne);
-                    this._KinectSensorOne.ElevationAngle = 0;            
+                    this._KinectSensorOne.ElevationAngle = 0;
                 }
             }
         }
