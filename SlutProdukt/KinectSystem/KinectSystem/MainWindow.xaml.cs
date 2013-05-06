@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,11 +36,12 @@ namespace KinectSystem
         private int _ImageStrideOne;
         private int _ImageStrideTwo;
 
+        //Variabler som används vid inläsning av fil och uppritning av figur
         string line;
         string number = null;
         int angle = 0;
         int timestamp = 0;
-        List<KeyValuePair<int, int>> valueList = new List<KeyValuePair<int, int>>();
+        ObservableCollection<KeyValuePair<int, int>> valueList = new ObservableCollection<KeyValuePair<int, int>>();
 
         private MainWindowViewModel viewModel;
 
@@ -64,6 +66,8 @@ namespace KinectSystem
             this.viewModel.CanStopTwo = false;
             this.DataContext = this.viewModel;
 
+            valueList.Add(new KeyValuePair<int, int>(0, 0));
+            lineChart.DataContext = valueList;
         }
         #endregion Constructor
 
@@ -463,6 +467,9 @@ namespace KinectSystem
             Info1.Filter = "(*.txt)|*.txt";
             Info1.RestoreDirectory = true;
 
+            //Tar bort tidigare filens värden från valueList
+            valueList.Clear();
+
             if (Info1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string file = Info1.FileName;
@@ -476,8 +483,7 @@ namespace KinectSystem
         {
             try
             {
-                System.Windows.MessageBox.Show(JointName);
-                if (File.Exists(JointName))
+                            if (File.Exists(JointName))
                 {
                     System.IO.StreamReader file = new System.IO.StreamReader(JointName);
                     while ((line = file.ReadLine()) !=null)
@@ -500,7 +506,8 @@ namespace KinectSystem
                             {
                                 timestamp = Convert.ToInt32(number);
                                 number = null;
-                                showLineSeries();
+                                valueList.Add(new KeyValuePair<int, int>(timestamp, angle));
+                                lineChart.DataContext = valueList;
                             }
                             else
                             {
@@ -524,23 +531,7 @@ namespace KinectSystem
             }
         }
 
-        //Lägger till timestamp och angle i valueList som sedan ritas.
-        private void showLineSeries()
-        {
-            valueList.Add(new KeyValuePair<int, int>(timestamp, angle));
-            lineChart.DataContext = valueList;
-            AddSeries();
-        }
-        private void AddSeries()
-        {
-            var series = new LineSeries();
-            series.SetBinding(LineSeries.ItemsSourceProperty, new System.Windows.Data.Binding());
-            series.DataContext = valueList;
-            series.DependentValueBinding = new System.Windows.Data.Binding("Value");
-            series.IndependentValueBinding = new System.Windows.Data.Binding("Key");
-            lineChart.Series.Add(series);
-        }
-        private void BrowseButton2_Click(object sender, RoutedEventArgs e)
+          private void BrowseButton2_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog Info2 = new OpenFileDialog();
             Info2.InitialDirectory = "c:\\";

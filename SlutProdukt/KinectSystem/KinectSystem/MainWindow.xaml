@@ -208,14 +208,21 @@
                     Margin="0,-30,10,0" Click="BrowseButton1_Click" />
             </StackPanel>
         </GroupBox>
+        <!--Definierar GroupBox som innehåller den plot som ritas-->
         <GroupBox x:Name="AngleChart" Header="AngleChart" Background="Wheat" Grid.Row="5" Grid.Column="3">
             <Grid  Margin="0,0,0,4">
                 <chartingToolkit:Chart x:Name="lineChart">
                     <chartingToolkit:Chart.Series>
                         <chartingToolkit:LineSeries DependentValuePath="Value"
                                         IndependentValuePath="Key" 
-                                        ItemsSource="{Binding DataContext}"
+                                        ItemsSource="{Binding}"
                                         IsSelectionEnabled="True">
+                            <chartingToolkit:LineSeries.DataPointStyle>
+                                <Style TargetType="chartingToolkit:LineDataPoint">
+                                    <Setter Property="Opacity" Value="0" />
+                                    <Setter Property="Background" Value="Black"/>
+                                </Style>
+                            </chartingToolkit:LineSeries.DataPointStyle>
                         </chartingToolkit:LineSeries>
                     </chartingToolkit:Chart.Series>
                 </chartingToolkit:Chart>
