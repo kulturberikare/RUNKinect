@@ -227,8 +227,18 @@
                     Margin="0,-30,10,0" Click="BrowseButton1_Click" />
             </StackPanel>
         </GroupBox>
-        <GroupBox x:Name="Pulse" Header="Pulsemonitor" Background="FloralWhite" Grid.Row="5" Grid.Column="3">
-        </GroupBox>
+        <Grid Grid.Column="4" Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="190" />
+                    <ColumnDefinition Width="190"/>
+                </Grid.ColumnDefinitions>
+            <GroupBox Grid.Column="0" Header="Speed" Background="AliceBlue">
+                <TextBlock Text="{Binding Speed}"/>
+            </GroupBox>
+            <GroupBox Grid.Column="1" Header="Incline" Background="Azure">
+                <TextBlock Text="{Binding Incline}" />
+            </GroupBox>
+        </Grid>
         <GroupBox x:Name="Infoset2" Header="Search information 2" Background="LightBlue" Grid.Row="6" Grid.Column="3">
             <StackPanel >
                 <Label Name="InfoLabel2" Content="Information file 2" Background="Wheat" Width="250" Height="30" HorizontalAlignment="Left" 

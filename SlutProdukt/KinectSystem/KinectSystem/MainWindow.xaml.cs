@@ -334,14 +334,8 @@ namespace KinectSystem
         {
             this._KinectSensorOne.SkeletonStream.Enable(); //Startar strömmen
             SkeletonViewerElement.KinectSensorOne = this.KinectSensorOne;
-
-            //Skriv ngt om vad viewModel är och varför det är med.
-            this.viewModel.IsSkeletonStreamEnabledOne = this.KinectSensorOne.SkeletonStream.IsEnabled;
-            this.viewModel.AngleHip = SkeletonViewerElement.AngleH;
-            this.viewModel.AngleRKnee = SkeletonViewerElement.AngleRK;
-            this.viewModel.AngleRAnkle = SkeletonViewerElement.AngleRA;
-            this.viewModel.AngleLKnee = SkeletonViewerElement.AngleLK;
-            this.viewModel.AngleLAnkle = SkeletonViewerElement.AngleLA;
+            this.KinectSensorOne.SkeletonFrameReady += SkeletonUpdate;
+            
         }
 
         //Eventhanterare som tar hand om det som händer när rutan för skeleton är urcheckad.
@@ -673,6 +667,18 @@ namespace KinectSystem
             }
         }
 
+        private void SkeletonUpdate(object sender, SkeletonFrameReadyEventArgs e)
+        {
+        //Skriv ngt om vad viewModel är och varför det är med.
+            this.viewModel.IsSkeletonStreamEnabledOne = this.KinectSensorOne.SkeletonStream.IsEnabled;
+            this.viewModel.AngleHip = SkeletonViewerElement.AngleH;
+            this.viewModel.AngleRKnee = SkeletonViewerElement.AngleRK;
+            this.viewModel.AngleRAnkle = SkeletonViewerElement.AngleRA;
+            this.viewModel.AngleLKnee = SkeletonViewerElement.AngleLK;
+            this.viewModel.AngleLAnkle = SkeletonViewerElement.AngleLA;
+            this.viewModel.Speed = SkeletonViewerElement.meanSpeed;
+            this.viewModel.Incline = SkeletonViewerElement.meanAngle;
+        }
         #endregion Methods
 
         #region Properties
@@ -696,6 +702,16 @@ namespace KinectSystem
                     this._KinectSensorOne = value;
                     InitializeKinectSensorOne(this._KinectSensorOne);
                     this._KinectSensorOne.ElevationAngle = 0;
+                    TransformSmoothParameters smoothingParam = new TransformSmoothParameters();
+                    {
+                        smoothingParam.Smoothing = 0.5f;
+                        smoothingParam.Correction = 0.1f;
+                        smoothingParam.Prediction = 0.5f;
+                        smoothingParam.JitterRadius = 0.1f;
+                        smoothingParam.MaxDeviationRadius = 0.1f;
+                    };
+
+                    this._KinectSensorOne.SkeletonStream.Enable(smoothingParam);
                 }
             }
         }

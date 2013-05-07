@@ -36,6 +36,23 @@ namespace KinectSystem
         public double AngleRA = 0;
         public double AngleLA = 0;
         public double AngleH = 0;
+
+        private Joint prevRightFoot = new Joint();
+        private Joint prevLeftFoot = new Joint();
+        private Joint startPoint = new Joint();
+        public Int64 startTime = 0;
+        public bool readyToStart = true;
+
+        private int index = 0;
+        private double[] speedArray = new double[10];
+        private double[] angleArray = new double[10];
+        public double meanSpeed;
+        public double meanAngle;
+        private double speed;
+        private double angle;
+        private double feetDistance;
+        private double prevFeetDistance;
+
         #endregion Member Variables
 
         #region Constructor
@@ -57,13 +74,91 @@ namespace KinectSystem
                 {
                     if (frame != null)
                     {
+                        Skeleton currentskeleton;
                         if (this.IsEnabled)
                         {
                             frame.CopySkeletonDataTo(this._FrameSkeletons);
 
-                                for (int i = 0; i < this._FrameSkeletons.Length; i++)
+                            for (int i = 0; i < this._FrameSkeletons.Length; i++)
+                            {
+                                DrawSkeleton(this._FrameSkeletons[i], this._SkeletonBrushes[i]);
+
+                                currentskeleton = this._FrameSkeletons[i];
+                                if (currentskeleton.TrackingState == SkeletonTrackingState.Tracked)
                                 {
-                                    DrawSkeleton(this._FrameSkeletons[i], this._SkeletonBrushes[i]);
+                                    Joint rightFoot = currentskeleton.Joints[JointType.FootRight];
+                                    Joint leftFoot = currentskeleton.Joints[JointType.FootLeft];
+
+                                    feetDistance = GetJointDistance(rightFoot, leftFoot);
+                                    prevFeetDistance = GetJointDistance(prevRightFoot, prevLeftFoot);
+
+                                    // Kolla om kriterierna uppfylls för att starta mätningen
+                                    if (feetDistance < 0.5 &&
+                                        feetDistance > 0.25 &&
+                                        feetDistance < prevFeetDistance &&
+                                        leftFoot.Position.X < rightFoot.Position.X && // Högerfoten närmast främre änden av löpbandet
+                                        readyToStart == true &&
+                                        startTime == 0)
+                                    {
+                                        startTime = frame.Timestamp;
+                                        startPoint = leftFoot;
+
+                                        readyToStart = false;
+                                    }
+
+                                    // Test för att se till så man inte missar slutpunkten och genomför mätningen på flera steg.
+                                    if (readyToStart == false &&
+                                        startTime != 0 &&
+                                        (frame.Timestamp - startTime) / 1000 > 0.75)
+                                    {
+                                        readyToStart = true;
+                                        startTime = 0;
+                                    }
+
+                                    // Kolla om kriterierna uppfylls för att avsluta mätningen.
+                                    if (feetDistance > 0.25 &&
+                                        feetDistance > prevFeetDistance &&
+                                        leftFoot.Position.X > rightFoot.Position.X &&
+                                        startTime != 0 &&
+                                        readyToStart == false)
+                                    {
+                                        double timeDifferenceMs = frame.Timestamp - startTime; // Skillnad mellan nuvarande tid och startTime i ms.
+                                        double time = timeDifferenceMs / 1000; // Gör om till s
+
+                                        Joint endPoint = leftFoot;
+                                        float leftFootDistance = GetJointDistance(startPoint, endPoint);
+
+                                        if (leftFootDistance > 0.2 && leftFootDistance < 0.5)
+                                        {
+                                            speed = TreadmillSpeed(leftFootDistance, time);
+                                            speedArray[index] = speed;
+
+                                            angle = TreadmillAngle(startPoint, endPoint);
+                                            angleArray[index] = angle;
+                                            index++;
+                                        }
+
+                                        if (index == 9)
+                                        {
+                                            Array.Sort(speedArray);
+                                            // Gör om medelvärdet till km/h
+                                            meanSpeed = Math.Round(SortedArrayMean(speedArray) * 3.6, 1);
+
+                                            Array.Sort(angleArray);
+                                            meanAngle = Math.Round(SortedArrayMean(angleArray), 1);
+                                            index = 0;
+                                        }
+
+                                        //SpeedText.Text = String.Format("{0} km/h", meanSpeed);
+                                        //AngleText.Text = String.Format("{1} degrees", meanAngle);
+
+                                        startTime = 0; // Nu är vi klara med StartTime. Förbereder för nästa mätning.
+                                        readyToStart = true;
+                                    }
+
+                                    // Spara positioner för att kunna jämföra med nästa frame.
+                                    prevRightFoot = rightFoot;
+                                    prevLeftFoot = leftFoot;
 
                                     TrackJoint(this._FrameSkeletons[i].Joints[JointType.HandLeft], this._SkeletonBrushes[i]);
                                     TrackJoint(this._FrameSkeletons[i].Joints[JointType.HandRight], this._SkeletonBrushes[i]);
@@ -72,6 +167,7 @@ namespace KinectSystem
                                     TrackJoint(this._FrameSkeletons[i].Joints[JointType.KneeLeft], this._SkeletonBrushes[i]);
                                     TrackJoint(this._FrameSkeletons[i].Joints[JointType.KneeRight], this._SkeletonBrushes[i]);
                                 }
+                            }
                         }
                     }
                 }
@@ -113,7 +209,51 @@ namespace KinectSystem
             }
         }
 
-        
+        // Metod för att räkna ut avståndet mellan två joints.
+        public float GetJointDistance(Joint rightJoint, Joint leftJoint)
+        {
+            float xDistance = rightJoint.Position.X - leftJoint.Position.X;
+            float yDistance = rightJoint.Position.Y - leftJoint.Position.Y;
+            float zDistance = rightJoint.Position.Z - leftJoint.Position.Z;
+
+            return (float)Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2) + Math.Pow(zDistance, 2));
+        }
+
+        // Metod för att få ut vinkeln på löpbandet.
+        // Beräknar motstående katet (skillnad i y-led) samt närstående katet (skillnad i x-led).
+        // Därefter arctan på hela kalaset.
+        public double TreadmillAngle(Joint footstart, Joint footend)
+        {
+            double oppcat = (footstart.Position.Y - footend.Position.Y);
+            double nearcat = (footstart.Position.X - footend.Position.X);
+
+            double angle = (Math.Atan(oppcat / nearcat)) * (180 / Math.PI);
+            angle = Math.Abs(angle);
+            return angle;
+        }
+
+        // Metod för att få ut hastigheten på löpbandet.
+        // Använder sig av tiden som förflutit mellan att foten sätts i löpbandet (neg. hastighet x-riktning)
+        // och när foten dras upp från löpbandet (pos. hastighet y-riktning).
+        public double TreadmillSpeed(double distance, double time)
+        {
+            double speed = (distance / time);
+            return speed;
+        }
+
+        // Ta medelvärde från en array. Denna funktion är framtagen för en array som är sorterad från
+        // lägsta till högsta värde. Den tar bort de två lägsta och de två högsta och tar medel på
+        // resterande.
+        public double SortedArrayMean(double[] array)
+        {
+            double sum = 0;
+            for (int i = 2; i < array.Length - 2; i++)
+            {
+                sum += array[i];
+            }
+            return sum / (array.Length - 4);
+        }
+
         private void TrackJoint(Joint joint, Brush brush)
         {
             if (joint.TrackingState != JointTrackingState.NotTracked)
@@ -163,11 +303,11 @@ namespace KinectSystem
             Vector3D kneeR = GetJointPoint3D(skeleton.Joints[JointType.KneeRight]);
 
             //Definierar vinklar för liveutskrift och sparning till fil
-            AngleRK = FindAngles(ankleR, kneeR, hipR);
-            AngleLK = FindAngles(ankleL, kneeL, hipL);
-            AngleRA = FindAngles(footR, ankleR, kneeR);
-            AngleLA = FindAngles(footL, ankleL, kneeL);
-            AngleH = FindAngles(hipL, hipCenter, hipR);
+            AngleRK = Math.Round(FindAngles(ankleR, kneeR, hipR),2);
+            AngleLK = Math.Round(FindAngles(ankleL, kneeL, hipL),2);
+            AngleRA = Math.Round(FindAngles(footR, ankleR, kneeR),2);
+            AngleLA = Math.Round(FindAngles(footL, ankleL, kneeL),2);
+            AngleH = Math.Round(FindAngles(hipL, hipCenter, hipR),2);
 
             //Hittar vinkeln i en led mha FindAngles och skickar sedan respektive led till respektive fil 
             WriterLK(AngleLK);

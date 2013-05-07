@@ -37,9 +37,44 @@ namespace KinectSystem
         public double ARA;
         public double ALK;
         public double ALA;
+
+        public double A;
+        public double S;
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion Member Variables
+
+        public double Speed
+        {
+            get
+            {
+                return this.S;
+            }
+            set
+            {
+                if (this.S != value)
+                {
+                    this.S = value;
+                    this.OnNotifyPropertyChanged("Speed");
+                }
+            }
+        }
+
+        public double Incline
+        {
+            get
+            {
+                return this.A;
+            }
+            set
+            {
+                if (this.A != value)
+                {
+                    this.A = value;
+                    this.OnNotifyPropertyChanged("Incline");
+                }
+            }
+        }
 
         public double AngleHip
         {

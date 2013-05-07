@@ -29,7 +29,7 @@ namespace NewTreadmillAngleSpeedAB
     {
         #region Member Variables
         private KinectSensor _Kinect;
-        private Skeleton[] _CurrentFrameSkeletons;
+        private Skeleton[] _FrameSkeletons;
         private Joint prevRightFoot = new Joint();
         private Joint prevLeftFoot = new Joint();
         private Joint startPoint = new Joint();
@@ -90,11 +90,11 @@ namespace NewTreadmillAngleSpeedAB
                 if (frame != null)
                 {
                     Skeleton currentskeleton;
-                    frame.CopySkeletonDataTo(this._CurrentFrameSkeletons);
+                    frame.CopySkeletonDataTo(this._FrameSkeletons);
                   
-                    for (int i = 0; i < this._CurrentFrameSkeletons.Length; i++)
+                    for (int i = 0; i < this._FrameSkeletons.Length; i++)
                     {
-                        currentskeleton = this._CurrentFrameSkeletons[i];
+                        currentskeleton = this._FrameSkeletons[i];
 
                         if (currentskeleton.TrackingState == SkeletonTrackingState.Tracked)
                         {
@@ -243,7 +243,7 @@ namespace NewTreadmillAngleSpeedAB
                         this._Kinect.Stop();
                         this._Kinect.SkeletonFrameReady -= Kinect_SkeletonFrameReady;
                         this._Kinect.SkeletonStream.Disable();
-                        this._CurrentFrameSkeletons = null;
+                        this._FrameSkeletons = null;
                     }
 
                     this._Kinect = value;
@@ -264,7 +264,7 @@ namespace NewTreadmillAngleSpeedAB
                             };
 
                             this._Kinect.SkeletonStream.Enable(smoothingParam);
-                            this._CurrentFrameSkeletons = new Skeleton[this._Kinect.SkeletonStream.FrameSkeletonArrayLength];
+                            this._FrameSkeletons = new Skeleton[this._Kinect.SkeletonStream.FrameSkeletonArrayLength];
                             this._Kinect.SkeletonFrameReady += Kinect_SkeletonFrameReady;
                             this._Kinect.Start();
                         }
