@@ -29,6 +29,7 @@ namespace KinectSystem
         private readonly Brush[] _SkeletonBrushes = new Brush[] { Brushes.Pink, Brushes.Crimson, Brushes.Indigo, Brushes.DodgerBlue, Brushes.Purple, Brushes.Green };
         private Skeleton[] _FrameSkeletons;
 
+        //Medlemsvariabler för counten till vinklarna samt globala varaibler till vinklarna.
         private double count = 0;
         public double AngleRK = 0;
         public double AngleLK = 0;
@@ -38,17 +39,14 @@ namespace KinectSystem
         #endregion Member Variables
 
         #region Constructor
-
         public SkeletonViewer()
         {
             InitializeComponent();
         }
-        
-
         #endregion Constructor
 
         #region Methods
-
+        //Eventhanterare
         public void Kinect_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             SkeletonsPanel.Children.Clear();
@@ -80,12 +78,13 @@ namespace KinectSystem
             }
         }
 
-
+        //Funktion som ritar upp skelettet som fås som invärde.
         private void DrawSkeleton(Skeleton skeleton, Brush brush)
         {
+            //Kollar om det finns ett skelett som följs.
             if (skeleton != null && skeleton.TrackingState == SkeletonTrackingState.Tracked)
             {
-                //Draw head and torso
+                //Ritar huvud och torax
                 Polyline figure = CreateFigure(skeleton, brush, new[] { JointType.Head, JointType.ShoulderCenter, JointType.ShoulderLeft, JointType.Spine,
                                                                              JointType.ShoulderRight, JointType.ShoulderCenter, JointType.HipCenter});
                 SkeletonsPanel.Children.Add(figure);
@@ -93,28 +92,28 @@ namespace KinectSystem
                 figure = CreateFigure(skeleton, brush, new[] { JointType.HipLeft, JointType.HipRight });
                 SkeletonsPanel.Children.Add(figure);
 
-                //Draw left leg
+                //Ritar vänster ben
                 figure = CreateFigure(skeleton, brush, new[] { JointType.HipCenter, JointType.HipLeft, JointType.KneeLeft, JointType.AnkleLeft, JointType.FootLeft });
                 SkeletonsPanel.Children.Add(figure);
 
-                //Draw right leg
+                //Ritar höger ben
                 figure = CreateFigure(skeleton, brush, new[] { JointType.HipCenter, JointType.HipRight, JointType.KneeRight, JointType.AnkleRight, JointType.FootRight });
                 SkeletonsPanel.Children.Add(figure);
 
-                //Draw left arm
+                //Ritar vänster arm
                 figure = CreateFigure(skeleton, brush, new[] { JointType.ShoulderLeft, JointType.ElbowLeft, JointType.WristLeft, JointType.HandLeft });
                 SkeletonsPanel.Children.Add(figure);
 
-                //Draw right arm
+                //Ritar höger arm
                 figure = CreateFigure(skeleton, brush, new[] { JointType.ShoulderRight, JointType.ElbowRight, JointType.WristRight, JointType.HandRight });
                 SkeletonsPanel.Children.Add(figure);
 
-                DefineVectors(skeleton);
-                count++;
+                DefineVectors(skeleton); //Kör funktionen DefineVectors
+                count++; //Ökar countern 
             }
         }
 
-
+        
         private void TrackJoint(Joint joint, Brush brush)
         {
             if (joint.TrackingState != JointTrackingState.NotTracked)
@@ -196,6 +195,7 @@ namespace KinectSystem
         //Skriver vinkeln i vänster knä till en textfil som heter LeftKnee
         private void WriterLK(double angle)
         {
+            //Skapar en textfil om den inte finns.
             if (!File.Exists("LeftKnee.txt"))
             {
                 StreamWriter file = new StreamWriter("LeftKnee.txt");
@@ -203,6 +203,7 @@ namespace KinectSystem
             }
             else
             {
+                //Använder filen som finns och sparar angle (om den inte är NaN) och count
                 using (StreamWriter file = new StreamWriter("LeftKnee.txt", true))
                 {
                     string _angle = Convert.ToString(Math.Round(angle));
@@ -215,6 +216,7 @@ namespace KinectSystem
 
                     else
                     {
+                        //Om vinkeln inte hittats, dvs om den är NaN, sparas den som värdet noll.
                         file.WriteLine("0" + ":" + Convert.ToString(count) + ";");
                         file.Close();
                     }
@@ -341,9 +343,9 @@ namespace KinectSystem
 
         #region Properties
         #region KinectSensorOne
+
         protected const string KinectDevicePropertyName = "KinectSensorOne";
         public static readonly DependencyProperty KinectDeviceProperty = DependencyProperty.Register(KinectDevicePropertyName, typeof(KinectSensor), typeof(SkeletonViewer), new PropertyMetadata(null, KinectDeviceChanged));
-
 
         private static void KinectDeviceChanged(DependencyObject owner, DependencyPropertyChangedEventArgs e)
         {
