@@ -1,4 +1,8 @@
-﻿using System;
+﻿/* Fil som innehåller all logik bakom MainWindow.xaml
+ * 
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -27,6 +31,7 @@ namespace KinectSystem
     public partial class MainWindow : Window
     {
         #region Member Variables
+        //Definition av medlemsvariabler till kamerorna
         private KinectSensor _KinectSensorOne;
         private KinectSensor _KinectSensorTwo;
         private WriteableBitmap _ImageOne;
@@ -66,12 +71,14 @@ namespace KinectSystem
             this.viewModel.CanStopTwo = false;
             this.DataContext = this.viewModel;
 
+            //Defualtinitierar plotten med endast värdet 0 i valueList
             valueList.Add(new KeyValuePair<int, int>(0, 0));
             lineChart.DataContext = valueList;
         }
         #endregion Constructor
 
         #region Methods
+        //Eventhanterare som 
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             if (KinectSensorOne != null && KinectSensorOne.IsRunning)
@@ -85,20 +92,26 @@ namespace KinectSystem
             }
         }
 
+        //Funktion som upptäcker kinectsensorer anslutna till datorn.
         public void DiscoverKinectSensors()
         {
+
             KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
 
+            //Sätter FirstKinect till den första inkopplade kameran den hittar. Om den inte hittar något sätts den till default.
             KinectSensor FirstKinect = KinectSensor.KinectSensors
                                           .FirstOrDefault(x => x.Status == KinectStatus.Connected);
+            //Sätter FirstKinect till den sista inkopplade kameran den hittar. Om den inte hittar något sätts den till default.
             KinectSensor LastKinect = KinectSensor.KinectSensors
                                .LastOrDefault(x => x.Status == KinectStatus.Connected);
 
+            //Om FirstKinect är skilt från null sätts KinectSensorOne till FirstKinect
             if (FirstKinect != null)
             {
                 KinectSensorOne = FirstKinect;
             }
 
+            //Om en andra kamera är ansluten sätts denna till KinectSensorTwo
             if (FirstKinect != null && LastKinect != null && FirstKinect != LastKinect)
             {
                 KinectSensorTwo = LastKinect;
@@ -109,12 +122,16 @@ namespace KinectSystem
             SetData();
         }
 
+        //Eventhanterare som tar hand om event gällande statusförändingar hos en kinectsensor.
         private void KinectSensors_StatusChanged(object sender, StatusChangedEventArgs e)
         {
             KinectSensor FirstKinect = KinectSensor.KinectSensors
                                                    .FirstOrDefault(x => x.Status == KinectStatus.Connected);
             KinectSensor LastKinect = KinectSensor.KinectSensors
                                                    .LastOrDefault(x => x.Status == KinectStatus.Connected);
+            
+            //Switchsats som tar in argumentet och går igenom olika möjliga states för kinecten.
+            //Gör olika saker beroende på om kameran är connected eller disconnected.
             switch (e.Status)
             {
                 case KinectStatus.Connected:
@@ -174,16 +191,18 @@ namespace KinectSystem
             }
         }
 
+        //Eventhanterare som tar hand om event gällande färgkameran.
         private void StartColorImageOne(object sender, RoutedEventArgs e)
         {
             if (!this.viewModel.IsColorStreamEnabledOne)
             {
                 KinectSensor sensor = KinectSensorOne;
 
+                //Stannar DepthImage för att kunna visa en colorimage istället.
                 StopDepthImageOne(sensor);
 
                 ColorImageStream colorStream = sensor.ColorStream;
-                colorStream.Enable();
+                colorStream.Enable(); //Startar colorstream.
 
                 this._ImageOne = new WriteableBitmap(colorStream.FrameWidth,
                                                           colorStream.FrameHeight, 96, 96,
@@ -193,11 +212,13 @@ namespace KinectSystem
                 this._ImageStrideOne = colorStream.FrameWidth * colorStream.FrameBytesPerPixel;
                 SightImageOne.Source = this._ImageOne;
 
+                //Adderar vår eventhanterare Kinect_ColorFrameReadyOne till den som finns inbyggd.
                 sensor.ColorFrameReady += Kinect_ColorFrameReadyOne;
                 this.viewModel.IsColorStreamEnabledOne = this.KinectSensorOne.ColorStream.IsEnabled;
             }
         }
 
+        //Samma som ovan fast för kamera två.
         private void StartColorImageTwo(object sender, RoutedEventArgs e)
         {
             if (!this.viewModel.IsColorStreamEnabledTwo)
@@ -222,6 +243,7 @@ namespace KinectSystem
             }
         }
 
+        //Stoppar ColorImage för kamera 1
         private void StopColorImageOne(KinectSensor sensor)
         {
             sensor.ColorFrameReady -= Kinect_ColorFrameReadyOne;
@@ -229,6 +251,7 @@ namespace KinectSystem
             this.viewModel.IsColorStreamEnabledOne = this.KinectSensorOne.ColorStream.IsEnabled;
         }
 
+        //Stoppar ColorImage för kamera 2
         private void StopColorImageTwo(KinectSensor sensor)
         {
             sensor.ColorFrameReady -= Kinect_ColorFrameReadyTwo;
@@ -236,16 +259,18 @@ namespace KinectSystem
             this.viewModel.IsColorStreamEnabledTwo = this.KinectSensorTwo.ColorStream.IsEnabled;
         }
 
+        //Eventhanterare som startar DepthImage för kamera 1
         private void StartDepthImageOne(object sender, RoutedEventArgs e)
         {
             if (!this.viewModel.IsDepthStreamEnabledOne)
             {
                 KinectSensor sensor = KinectSensorOne;
 
+                //Stoppar colorimage
                 StopColorImageOne(sensor);
 
                 DepthImageStream depthStream = sensor.DepthStream;
-                //Har ändrat upplösningen här för djup 3D experimentet 
+                //Har ändrat upplösningen här för djup 3D experimentet -----------------------------------------------
                 depthStream.Enable(DepthImageFormat.Resolution320x240Fps30);
 
                 this._ImageOne = new WriteableBitmap(depthStream.FrameWidth,
@@ -261,6 +286,7 @@ namespace KinectSystem
             }
         }
 
+        //SAmma som ovan fast för kamera 2
         private void StartDepthImageTwo(object sender, RoutedEventArgs e)
         {
             if (!this.viewModel.IsDepthStreamEnabledTwo)
@@ -285,13 +311,16 @@ namespace KinectSystem
             }
         }
 
+        //Stoppar djupdatabilden från kamera 1. 
         private void StopDepthImageOne(KinectSensor sensor)
         {
+            //Plockar bort vår eventhanterare.
             sensor.DepthFrameReady -= Kinect_DepthFrameReadyOne;
-            sensor.DepthStream.Disable();
+            sensor.DepthStream.Disable(); //Avslutar strömmen
             this.viewModel.IsDepthStreamEnabledOne = this.KinectSensorOne.DepthStream.IsEnabled;
         }
 
+        //Samma som ovan fast för kamera 2.
         private void StopDepthImageTwo(KinectSensor sensor)
         {
             sensor.DepthFrameReady -= Kinect_DepthFrameReadyTwo;
@@ -299,10 +328,14 @@ namespace KinectSystem
             this.viewModel.IsDepthStreamEnabledTwo = this.KinectSensorTwo.DepthStream.IsEnabled;
         }
 
+        //Eventhanterare som tar hand om att starta skelettströmmen då den lådan checkas i. 
+        //För kamera 1
         private void Skeleton1_Checked(object sender, RoutedEventArgs e)
         {
-            this._KinectSensorOne.SkeletonStream.Enable();
+            this._KinectSensorOne.SkeletonStream.Enable(); //Startar strömmen
             SkeletonViewerElement.KinectSensorOne = this.KinectSensorOne;
+
+            //Skriv ngt om vad viewModel är och varför det är med.
             this.viewModel.IsSkeletonStreamEnabledOne = this.KinectSensorOne.SkeletonStream.IsEnabled;
             this.viewModel.AngleHip = SkeletonViewerElement.AngleH;
             this.viewModel.AngleRKnee = SkeletonViewerElement.AngleRK;
@@ -311,33 +344,40 @@ namespace KinectSystem
             this.viewModel.AngleLAnkle = SkeletonViewerElement.AngleLA;
         }
 
+        //Eventhanterare som tar hand om det som händer när rutan för skeleton är urcheckad.
+        //gäller kamera 1
         private void Skeleton1_UnChecked(object sender, RoutedEventArgs e)
         {
-            this._KinectSensorOne.SkeletonStream.Disable();
+            this._KinectSensorOne.SkeletonStream.Disable(); //stänger strömmen
             this.viewModel.IsSkeletonStreamEnabledOne = this.KinectSensorOne.SkeletonStream.IsEnabled;
-            SkeletonViewerElement.SkeletonsPanel.Children.Clear();
+            SkeletonViewerElement.SkeletonsPanel.Children.Clear(); //Rensar .......................
         }
 
+        //Eventhanterare som tar hand om att starta skelettströmmen då den lådan checkas i.
+        //Gäller kamera 2
         private void Skeleton2_Checked(object sender, RoutedEventArgs e)
         {
-            this._KinectSensorTwo.SkeletonStream.Enable();
+            this._KinectSensorTwo.SkeletonStream.Enable(); //Startar strömmen
             SkeletonViewerTwoElement.KinectSensorTwo = this.KinectSensorTwo;
             this.viewModel.IsSkeletonStreamEnabledTwo = this.KinectSensorTwo.SkeletonStream.IsEnabled;
         }
 
+        //Eventhanterare som tar hand om det som händer när rutan för skeleton är urcheckad.
+        //gäller kamera 2
         private void Skeleton2_UnChecked(object sender, RoutedEventArgs e)
         {
-            this._KinectSensorTwo.SkeletonStream.Disable();
+            this._KinectSensorTwo.SkeletonStream.Disable(); //Stänger strömmen
             this.viewModel.IsSkeletonStreamEnabledTwo = this.KinectSensorTwo.SkeletonStream.IsEnabled;
             SkeletonViewerTwoElement.SkeletonsPanelTwo.Children.Clear();
         }
 
+        //Funktion som initialiserar kinectsensor ett. 
         private void InitializeKinectSensorOne(KinectSensor sensor)
         {
             if (sensor != null)
             {
                 SightImageOne.Source = this._ImageOne;
-                deletePrevFiles();
+                deletePrevFiles(); //Plockar bort textfiler med vinklar från tidigare körningar.
                 sensor.Start();
             }
         }
@@ -345,6 +385,7 @@ namespace KinectSystem
         //Plockar bort textfiler med vinklar från tidigare körningar. Kallas när kinectsensor 1 initialiseras
         private void deletePrevFiles()
         {
+            //Om den aktuella textfilen finns plockas den bort.
             if (File.Exists("Hip.txt"))
             {
                 StreamWriter file = new StreamWriter("Hip.txt");
@@ -372,6 +413,7 @@ namespace KinectSystem
             }
         }
 
+        //Initierar kinectSensor 2
         private void InitializeKinectSensorTwo(KinectSensor sensor)
         {
             if (sensor != null)
@@ -381,11 +423,12 @@ namespace KinectSystem
             }
         }
 
+        //Avintitialiserar kinectsensor 2.
         private void UninitializeKinectSensorOne(KinectSensor sensor)
         {
             if (sensor != null)
             {
-                sensor.Stop();
+                sensor.Stop(); 
                 if (this.viewModel.IsColorStreamEnabledOne)
                 {
                     StopColorImageOne(sensor);
@@ -398,6 +441,7 @@ namespace KinectSystem
             }
         }
 
+        //Avinitialiserar kinectsensor två
         private void UninitializeKinectSensorTwo(KinectSensor sensor)
         {
             if (sensor != null)
@@ -415,6 +459,7 @@ namespace KinectSystem
             }
         }
 
+        //Eventhanterare
         private void Kinect_ColorFrameReadyOne(object sender, ColorImageFrameReadyEventArgs e)
         {
             using (ColorImageFrame frame = e.OpenColorImageFrame())
@@ -430,6 +475,7 @@ namespace KinectSystem
             }
         }
 
+        //Eventhanterare
         private void Kinect_ColorFrameReadyTwo(object sender, ColorImageFrameReadyEventArgs e)
         {
             using (ColorImageFrame frame = e.OpenColorImageFrame())
@@ -444,11 +490,12 @@ namespace KinectSystem
             }
         }
 
+        //Eventhanterare
         private void Kinect_DepthFrameReadyOne(object sender, DepthImageFrameReadyEventArgs e)
         {
             using (DepthImageFrame frame = e.OpenDepthImageFrame())
             {
-                //Glöm ej att Lägga tillbaka den här!
+                //Glöm ej att Lägga tillbaka den här!---------------------------------------------------
                 if (frame != null)
                 {
                     short[] pixelData = new short[frame.PixelDataLength];
@@ -500,8 +547,8 @@ namespace KinectSystem
         {
             //Definierar i vilken mapp det ska letas i och efter vilken filtyp
             OpenFileDialog Info1 = new OpenFileDialog();
-            Info1.InitialDirectory = "SlutProdukt/KinectSystem/bin";
-            Info1.Filter = "(*.txt)|*.txt";
+            Info1.InitialDirectory = "SlutProdukt/KinectSystem/bin"; //bestämmer vilken mapp som öppnas
+            Info1.Filter = "(*.txt)|*.txt"; //Bestämmer vilken filtyp som visas.
             Info1.RestoreDirectory = true;
 
             //Tar bort tidigare filens värden från valueList
@@ -582,6 +629,8 @@ namespace KinectSystem
             }
         }
 
+        //Eventhanterare som tar hand om logiken bakom "öka vinkeln" knappen för kamera 1
+        //Om inte ElevationAngle är max ökas det med en.
         private void AngleUpOne(object sender, RoutedEventArgs e)
         {
             if (this.KinectSensorOne.ElevationAngle != this.KinectSensorOne.MaxElevationAngle)
@@ -591,6 +640,8 @@ namespace KinectSystem
             }
         }
 
+        //Eventhanterare som tar hand om logiken bakom "öka vinkeln" knappen för kamera 2
+        //Om inte ElevationAngle är max ökas det med en.
         private void AngleUpTwo(object sender, RoutedEventArgs e)
         {
             if (this.KinectSensorTwo.ElevationAngle != this.KinectSensorTwo.MaxElevationAngle)
@@ -600,6 +651,8 @@ namespace KinectSystem
             }
         }
 
+        //Eventhanterare som tar hand om logiken bakom "minska vinkeln" knappen för kamera 1
+        //Om inte ElevationAngle är min minskas det med en.
         private void AngleDownOne(object sender, RoutedEventArgs e)
         {
             if (this.KinectSensorOne.ElevationAngle != this.KinectSensorOne.MinElevationAngle)
@@ -609,6 +662,8 @@ namespace KinectSystem
             }
         }
 
+        //Eventhanterare som tar hand om logiken bakom "öka vinkeln" knappen för kamera 2
+        //Om inte ElevationAngle är min minskas det med en.
         private void AngleDownTwo(object sender, RoutedEventArgs e)
         {
             if (this.KinectSensorTwo.ElevationAngle != this.KinectSensorTwo.MinElevationAngle)
