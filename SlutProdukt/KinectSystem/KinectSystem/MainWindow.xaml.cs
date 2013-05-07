@@ -304,6 +304,11 @@ namespace KinectSystem
             this._KinectSensorOne.SkeletonStream.Enable();
             SkeletonViewerElement.KinectSensorOne = this.KinectSensorOne;
             this.viewModel.IsSkeletonStreamEnabledOne = this.KinectSensorOne.SkeletonStream.IsEnabled;
+            this.viewModel.AngleHip = SkeletonViewerElement.AngleH;
+            this.viewModel.AngleRKnee = SkeletonViewerElement.AngleRK;
+            this.viewModel.AngleRAnkle = SkeletonViewerElement.AngleRA;
+            this.viewModel.AngleLKnee = SkeletonViewerElement.AngleLK;
+            this.viewModel.AngleLAnkle = SkeletonViewerElement.AngleLA;
         }
 
         private void Skeleton1_UnChecked(object sender, RoutedEventArgs e)
@@ -420,6 +425,7 @@ namespace KinectSystem
                     frame.CopyPixelDataTo(pixelData);
                     this._ImageOne.WritePixels(this._ImageRectOne,
                                                     pixelData, this._ImageStrideOne, 0);
+                    
                 }
             }
         }

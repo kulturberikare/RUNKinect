@@ -32,9 +32,94 @@ namespace KinectSystem
         private bool canStartValueTwo;
         private bool canStopValueTwo;
 
+        public double AH;
+        public double ARK;
+        public double ARA;
+        public double ALK;
+        public double ALA;
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion Member Variables
+
+        public double AngleHip
+        {
+            get
+            {
+                return this.AH;
+            }
+            set
+            {
+                if (this.AH != value)
+                {
+                    this.AH = value;
+                    this.OnNotifyPropertyChanged("AngleHip");
+                }
+            }
+        }
+
+        public double AngleRKnee
+        {
+            get
+            {
+                return this.ARK;
+            }
+            set
+            {
+                if (this.ARK != value)
+                {
+                    this.ARK = value;
+                    this.OnNotifyPropertyChanged("AngleRKnee");
+                }
+            }
+        }
+
+        public double AngleRAnkle
+        {
+            get
+            {
+                return this.ARA;
+            }
+            set
+            {
+                if (this.ARA != value)
+                {
+                    this.ARA = value;
+                    this.OnNotifyPropertyChanged("AngleRAnkle");
+                }
+            }
+        }
+
+        public double AngleLKnee
+        {
+            get
+            {
+                return this.ALK;
+            }
+            set
+            {
+                if (this.ALK != value)
+                {
+                    this.ALK = value;
+                    this.OnNotifyPropertyChanged("AngleLKnee");
+                }
+            }
+        }
+
+        public double AngleLAnkle
+        {
+            get
+            {
+                return this.ALA;
+            }
+            set
+            {
+                if (this.ALA != value)
+                {
+                    this.ALA = value;
+                    this.OnNotifyPropertyChanged("AngleLAnkle");
+                }
+            }
+        }
 
         #region Methods
         public void OnNotifyPropertyChanged(string propertyName)
