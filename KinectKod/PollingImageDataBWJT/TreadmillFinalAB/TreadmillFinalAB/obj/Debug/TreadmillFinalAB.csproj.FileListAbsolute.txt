@@ -1,0 +1,13 @@
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\bin\Debug\TreadmillFinalAB.exe.config
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\bin\Debug\TreadmillFinalAB.exe
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\bin\Debug\TreadmillFinalAB.pdb
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\TreadmillFinalAB.csprojResolveAssemblyReference.cache
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\MainWindow.baml
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\MainWindow.g.cs
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\App.g.cs
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\TreadmillFinalAB_MarkupCompile.cache
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\TreadmillFinalAB.g.resources
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\TreadmillFinalAB.Properties.Resources.resources
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\TreadmillFinalAB.csproj.GenerateResource.Cache
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\TreadmillFinalAB.exe
+c:\users\alex\documents\visual studio 2012\Projects\TreadmillFinalAB\TreadmillFinalAB\obj\Debug\TreadmillFinalAB.pdb
