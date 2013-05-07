@@ -3,22 +3,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="1080" Width="1920">
     <Viewbox>
-        <Grid x:Name="LayoutRoot" Height="1080" Width="1920">
-            <Polyline x:Name="CrayonElement" Stroke="Azure" StrokeThickness="3"/>
+        <Grid>
+        <!--<Grid x:Name="LayoutRoot" Height="1080" Width="1920">
+            <Polyline x:Name="CrayonElement" Stroke="Azure" StrokeThickness="3"/>-->
             <Image x:Name="ColorImageElement" Height="1080" Width="1920"/>
-                <Canvas x:Name="FootStartEnd" Height="1080" Width="1920">
-                    <Ellipse x:Name="FootFront" Fill="ForestGreen" Height="25" Width="25"/> 
+            
+            <Canvas x:Name="FootStartEnd">
+                    <Ellipse x:Name="FootFront" Fill="ForestGreen" Height="25" Width="25"/>
                     <Ellipse x:Name="FootBack" Fill="Crimson" Height="25" Width="25"/>
-                </Canvas>
-            <!--<StackPanel VerticalAlignment="Bottom">
+            </Canvas>
+                <!--<StackPanel VerticalAlignment="Bottom">
                 <TextBlock x:Name="FootDistance" FontFamily="Arial Black" FontSize="48" TextAlignment="Left"/>
-            </StackPanel>
-            <StackPanel VerticalAlignment="Top">
-                <TextBlock x:Name="TestText" FontFamily="Arial Black" FontSize="48" HorizontalAlignment="Right"/>
             </StackPanel>-->
-            <StackPanel VerticalAlignment="Center">
+                <StackPanel VerticalAlignment="Top">
+                    <TextBlock x:Name="TestText" FontFamily="Arial Black" FontSize="48" HorizontalAlignment="Right"/>
+                </StackPanel>
+                <!--<StackPanel VerticalAlignment="Center">
                 <TextBlock x:Name="ExtraTest" FontFamily="Arial Black" FontSize="48" TextAlignment="Center"/>
-            </StackPanel>
-        </Grid>
+            </StackPanel>-->
+            </Grid>
     </Viewbox>
 </Window>

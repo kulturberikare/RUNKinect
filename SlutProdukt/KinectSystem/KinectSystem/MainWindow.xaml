@@ -61,10 +61,10 @@
         <Grid Grid.Row="2" Grid.Column="0">
             <GroupBox x:Name="Camera1" Header="Camera 1" Background="AntiqueWhite" Grid.Row="2" Grid.Column="0">
                 <Viewbox>
-                    <Grid x:Name="LayoutRootOne">
-                        <Image x:Name="SightImageOne"/>
-                        <c:SkeletonViewer x:Name="SkeletonViewerElement"/>
-                    </Grid>
+                        <Grid x:Name="LayoutRootOne" >
+                            <Image x:Name="SightImageOne" />
+                            <c:SkeletonViewer x:Name="SkeletonViewerElement"/>
+                        </Grid>
                 </Viewbox>
             </GroupBox>
         </Grid>
@@ -78,7 +78,26 @@
                 </Viewbox>
             </GroupBox>
         </Grid>
-        <GroupBox x:Name="Pulse" Header="Pulsemonitor" Background="FloralWhite" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4"/>
+        <!--Definierar GroupBox som innehåller den plot som ritas-->
+        <GroupBox x:Name="AngleChart" Header="AngleChart" Background="Wheat" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,5,0,-5">
+            <Grid  Margin="0,0,0,4">
+                <chartingToolkit:Chart x:Name="lineChart">
+                    <chartingToolkit:Chart.Series>
+                        <chartingToolkit:LineSeries DependentValuePath="Value"
+                                        IndependentValuePath="Key" 
+                                        ItemsSource="{Binding}"
+                                        IsSelectionEnabled="True">
+                            <chartingToolkit:LineSeries.DataPointStyle>
+                                <Style TargetType="chartingToolkit:LineDataPoint">
+                                    <Setter Property="Opacity" Value="0" />
+                                    <Setter Property="Background" Value="Black"/>
+                                </Style>
+                            </chartingToolkit:LineSeries.DataPointStyle>
+                        </chartingToolkit:LineSeries>
+                    </chartingToolkit:Chart.Series>
+                </chartingToolkit:Chart>
+            </Grid>
+        </GroupBox>
         <GroupBox Header="Buttons for 3D" Background="WhiteSmoke" Grid.Row="6" Grid.Column="1">
             <StackPanel x:Name="Button3D" Grid.Row="5" Grid.Column="1" >
                 <Button x:Name="Back" Content="Back" Background="AliceBlue" Height="24" Margin="3,3,0,0" Width="55"
@@ -208,25 +227,7 @@
                     Margin="0,-30,10,0" Click="BrowseButton1_Click" />
             </StackPanel>
         </GroupBox>
-        <!--Definierar GroupBox som innehåller den plot som ritas-->
-        <GroupBox x:Name="AngleChart" Header="AngleChart" Background="Wheat" Grid.Row="5" Grid.Column="3">
-            <Grid  Margin="0,0,0,4">
-                <chartingToolkit:Chart x:Name="lineChart">
-                    <chartingToolkit:Chart.Series>
-                        <chartingToolkit:LineSeries DependentValuePath="Value"
-                                        IndependentValuePath="Key" 
-                                        ItemsSource="{Binding}"
-                                        IsSelectionEnabled="True">
-                            <chartingToolkit:LineSeries.DataPointStyle>
-                                <Style TargetType="chartingToolkit:LineDataPoint">
-                                    <Setter Property="Opacity" Value="0" />
-                                    <Setter Property="Background" Value="Black"/>
-                                </Style>
-                            </chartingToolkit:LineSeries.DataPointStyle>
-                        </chartingToolkit:LineSeries>
-                    </chartingToolkit:Chart.Series>
-                </chartingToolkit:Chart>
-            </Grid>
+        <GroupBox x:Name="Pulse" Header="Pulsemonitor" Background="FloralWhite" Grid.Row="5" Grid.Column="3">
         </GroupBox>
         <GroupBox x:Name="Infoset2" Header="Search information 2" Background="LightBlue" Grid.Row="6" Grid.Column="3">
             <StackPanel >

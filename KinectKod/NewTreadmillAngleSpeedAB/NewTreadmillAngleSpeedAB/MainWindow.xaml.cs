@@ -32,7 +32,8 @@ namespace NewTreadmillAngleSpeedAB
         private Joint prevRightFoot = new Joint();
         private Joint prevLeftFoot = new Joint();
         private Joint startPoint = new Joint();
-        private DateTime startTime = DateTime.MinValue;
+        public Int64 startTime = 0;
+        public bool readyToStart = true;
 
         private int index = 0;
         private double[] speedArray = new double[10];
@@ -41,7 +42,7 @@ namespace NewTreadmillAngleSpeedAB
         private double meanAngle;
         private double velocity;
         private double angle;
-        private double maxFeetDistance = 0;
+        // private double maxFeetDistance = 0;
         private double feetDistance;
         private double prevFeetDistance;
 
@@ -113,9 +114,9 @@ namespace NewTreadmillAngleSpeedAB
                     frame.CopySkeletonDataTo(this._CurrentFrameSkeletons);
 
                     // Ritgrejer
-                    Polyline figure;
-                    Brush userBrush;
-                    LayoutRoot.Children.Clear();
+                    //Polyline figure;
+                    //Brush userBrush;
+                    //LayoutRoot.Children.Clear();
                     // Ritgrejer
                     for (int i = 0; i < this._CurrentFrameSkeletons.Length; i++)
                     {
@@ -123,17 +124,20 @@ namespace NewTreadmillAngleSpeedAB
 
                         if (currentskeleton.TrackingState == SkeletonTrackingState.Tracked)
                         {
-                            // Rita!
+                            //#region DrawSkeleton
+                            //userBrush = this._SkeletonBrushes[i % this._SkeletonBrushes.Length];
 
+                            //figure = CreateFigure(currentskeleton, userBrush, new[] { JointType.HipLeft, JointType.KneeLeft,
+                            //                 JointType.AnkleLeft, JointType.FootLeft});
 
-                            userBrush = this._SkeletonBrushes[i % this._SkeletonBrushes.Length];
+                            //LayoutRoot.Children.Add(figure);
 
-                            figure =  CreateFigure(currentskeleton, userBrush, new [] { JointType.HipLeft, JointType.KneeLeft,
-                                             JointType.AnkleLeft, JointType.FootLeft});
+                            //figure = CreateFigure(currentskeleton, userBrush, new[] { JointType.HipRight, JointType.KneeRight,
+                            //                 JointType.AnkleRight, JointType.FootRight});
 
-                            figure = CreateFigure(currentskeleton, userBrush, new [] { JointType.HipRight, JointType.KneeRight,
-                                             JointType.AnkleRight, JointType.FootRight});                            
-                            // Rita!
+                            //LayoutRoot.Children.Add(figure);
+                            //#endregion DrawSkeleton
+                            
 
                             Joint rightFoot = currentskeleton.Joints[JointType.FootRight];
                             Joint leftFoot = currentskeleton.Joints[JointType.FootLeft];
@@ -141,6 +145,7 @@ namespace NewTreadmillAngleSpeedAB
                             feetDistance = GetJointDistance(rightFoot, leftFoot);
                             prevFeetDistance = GetJointDistance(prevRightFoot, prevLeftFoot);
 
+                            #region Test1
                             //using (System.IO.StreamWriter file = new System.IO.StreamWriter
                             //       (@"C:\Users\Alex\Documents\GitHub\RUNKinect\KinectKod\NewTreadmillAngleSpeedAB\FeetDistance12.txt", true))
                             //{
@@ -150,16 +155,19 @@ namespace NewTreadmillAngleSpeedAB
 
                             //FootDistance.Text = String.Format("{0} \n {1} maxavstånd", Math.Round(feetDistance, 2),
                             //                                                           Math.Round(maxFeetDistance, 2));
+                            #endregion Test1
 
                             if (feetDistance < 0.5 &&
+                                feetDistance > 0.25 &&
                                 feetDistance < prevFeetDistance &&
-                                rightFoot.Position.X < leftFoot.Position.X && // Högerfoten närmast främre änden av löpbandet
-                                startTime == DateTime.MinValue)
+                                leftFoot.Position.X < rightFoot.Position.X && // Högerfoten närmast främre änden av löpbandet
+                                readyToStart == true &&
+                                startTime == 0)
                             {
-                                startTime = DateTime.Now;
-                                startPoint = prevRightFoot;
+                                startTime = frame.Timestamp;
+                                startPoint = leftFoot;
 
-                                // Rita ut startPoint som en prick
+                                #region DrawStartPoint
                                 ColorImagePoint point = this._Kinect.CoordinateMapper.MapSkeletonPointToColorPoint(startPoint.Position, ColorImageFormat.RgbResolution640x480Fps30);
 
                                 point.X = (int)((point.X * ColorImageElement.ActualWidth /
@@ -172,27 +180,34 @@ namespace NewTreadmillAngleSpeedAB
 
                                 Canvas.SetLeft(FootFront, point.X);
                                 Canvas.SetTop(FootFront, point.Y);
-                                // Slut
+                                #endregion DrawStartPoint
+
+                                readyToStart = false;
                             }
 
-                            if (startTime != DateTime.Now &&
-                                (DateTime.Now - startTime).Ticks / 10000000 > 0.75)
+                            if (readyToStart == false &&
+                                startTime != 0 &&
+                                (frame.Timestamp - startTime) / 1000 > 0.75)
                             {
-                                startTime = DateTime.MinValue;
+                                readyToStart = true;
+                                startTime = 0;
                             }
 
-                            if (feetDistance > 0.2 &&
+                            if (feetDistance > 0.25 &&
                                 feetDistance > prevFeetDistance &&
-                                rightFoot.Position.X > leftFoot.Position.X &&                               
-                                startTime != DateTime.MinValue)
+                                leftFoot.Position.X > rightFoot.Position.X &&
+                                startTime != 0 &&
+                                readyToStart == false)
                             {
-                                double timeDifferenceMs = (DateTime.Now - startTime).Ticks; // Skillnad mellan nuvarande tid och StartTime i Ticks, 10 µs.
-                                double time = timeDifferenceMs / 10000000; // Gör om till s
+                                double timeDifferenceMs = frame.Timestamp - startTime; // Skillnad mellan nuvarande tid och startTime i ms.
+                                double time = timeDifferenceMs / 1000; // Gör om till s
 
-                                Joint endPoint = rightFoot;
-                                float rightFootDistance = GetJointDistance(startPoint, endPoint);
+                                Joint endPoint = leftFoot;
+                                float leftFootDistance = GetJointDistance(startPoint, endPoint);
 
-                                // Rita ut endPoint som en prick
+                                //MessageBox.Show("Då!");
+
+                                #region DrawEndPoint
                                 ColorImagePoint point = this._Kinect.CoordinateMapper.MapSkeletonPointToColorPoint(endPoint.Position, ColorImageFormat.RgbResolution640x480Fps30);
 
                                 point.X = (int)((point.X * ColorImageElement.ActualWidth /
@@ -205,11 +220,11 @@ namespace NewTreadmillAngleSpeedAB
 
                                 Canvas.SetLeft(FootBack, point.X);
                                 Canvas.SetTop(FootBack, point.Y);
-                                // Slut
+                                #endregion DrawEndPoint
 
-                                if (rightFootDistance > 0.12 && rightFootDistance < 0.4)
+                                if (leftFootDistance > 0.2 && leftFootDistance < 0.5)
                                 {
-                                    velocity = TreadmillSpeed(rightFootDistance, time);
+                                    velocity = TreadmillSpeed(leftFootDistance, time);
                                     speedArray[index] = velocity;
 
                                     angle = TreadmillAngle(startPoint, endPoint);
@@ -219,30 +234,38 @@ namespace NewTreadmillAngleSpeedAB
 
                                 if (index == 9)
                                 {
+                                    Array.Sort(speedArray);
+                                    //double first = speedArray[1];
+
+                                    //MessageBox.Show(first.ToString());
+
                                     meanVelocity = Math.Round(ArrayMean(speedArray) * 3.6, 1);
                                     meanAngle = Math.Round(ArrayMean(angleArray), 1);
                                     index = 0;
-                                    maxFeetDistance = 0;
+                                    // maxFeetDistance = 0;
                                 }
 
-                                if (feetDistance > maxFeetDistance)
-                                {
-                                    maxFeetDistance = feetDistance;
-                                }
+                                //if (feetDistance > maxFeetDistance)
+                                //{
+                                //    maxFeetDistance = feetDistance;
+                                //}
 
-                                //TestText.Text = String.Format("{0} m/s \n {1} s \n {2} avstånd(m) \n {3} mätningar har gjorts \n {4} km/h medel",
-                                //                              Math.Round(velocity, 2), Math.Round(time, 2), Math.Round(rightFootDistance, 2),
-                                //                              index, meanVelocity);
+                                TestText.Text = String.Format("{0} m/s \n {1} s \n {2} avstånd(m) \n {3} mätningar har gjorts \n {4} km/h medel",
+                                                              Math.Round(velocity, 2), Math.Round(time, 2), Math.Round(leftFootDistance, 2),
+                                                              index, meanVelocity);
 
-                                startTime = DateTime.MinValue; // Nu är vi klara med StartTime. Förbereder för nästa mätning.                               
+                                startTime = 0; // Nu är vi klara med StartTime. Förbereder för nästa mätning.
+                                readyToStart = true;                                
                             }
 
-                            ExtraTest.Text = String.Format("\n\n\n {0} i x \n {1} i y \n {2} i z", Math.Round(startPoint.Position.X, 2),
-                                                                                                   Math.Round(startPoint.Position.Y, 2),
-                                                                                                   Math.Round(startPoint.Position.Z, 2));
+                            //ExtraTest.Text = String.Format("\n\n\n {0} i x \n {1} i y \n {2} i z", Math.Round(startPoint.Position.X, 2),
+                            //                                                                       Math.Round(startPoint.Position.Y, 2),
+                            //                                                                       Math.Round(startPoint.Position.Z, 2));
 
                             prevRightFoot = rightFoot;
                             prevLeftFoot = leftFoot;
+
+                            //TestText.Text = string.Format("{0} m", Math.Round(feetDistance, 3));
                         }
                     }
                 }
@@ -286,16 +309,18 @@ namespace NewTreadmillAngleSpeedAB
             return speed;
         }
 
-        // Ta medelvärde från en array. Funkar!
+        // Ta medelvärde från en array.
         public double ArrayMean(double[] array)
         {
             double sum = 0;
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 2; i < array.Length - 2; i++)
             {
                 sum += array[i];
             }
-            return sum / array.Length;
+            return sum / (array.Length - 4);
         }
+
+        // Sortera bort värden ur array som är för låga eller för höga.
 
         // Set ElevationAngle.
         private void SetSensorAngle(int angleValue)
@@ -308,31 +333,32 @@ namespace NewTreadmillAngleSpeedAB
             }
         }
 
-        // Rita
-        private Polyline CreateFigure(Skeleton skeleton, Brush brush, JointType[] joints)
-        {
-            Polyline figure        = new Polyline();
-            figure.StrokeThickness = 8;
-            figure.Stroke          = brush;
+        //#region DrawHelp
+        //private Polyline CreateFigure(Skeleton skeleton, Brush brush, JointType[] joints)
+        //{
+        //    Polyline figure = new Polyline();
+        //    figure.StrokeThickness = 8;
+        //    figure.Stroke = brush;
 
-            for(int i = 0; i < joints.Length; i++)
-            {
-                figure.Points.Add(GetJointPoint(skeleton.Joints[joints[i]]));
-            }
+        //    for (int i = 0; i < joints.Length; i++)
+        //    {
+        //        figure.Points.Add(GetJointPoint(skeleton.Joints[joints[i]]));
+        //    }
 
-            return figure;
-        }
+        //    return figure;
+        //}
 
-        private Point GetJointPoint(Joint joint)
-        {
-            DepthImagePoint point = this._Kinect.CoordinateMapper.MapSkeletonPointToDepthPoint(joint.Position,
-                                                                         this._Kinect.DepthStream.Format);
+        //private Point GetJointPoint(Joint joint)
+        //{
+        //    ColorImagePoint point = this._Kinect.CoordinateMapper.MapSkeletonPointToColorPoint(joint.Position,
+        //                                                                 this._Kinect.ColorStream.Format);
 
-            point.X *= (int)this.LayoutRoot.ActualWidth / this._Kinect.DepthStream.FrameWidth;
-            point.Y *= (int)this.LayoutRoot.ActualHeight / this._Kinect.DepthStream.FrameHeight;
+        //    point.X *= (int)this.LayoutRoot.ActualWidth / this._Kinect.ColorStream.FrameWidth;
+        //    point.Y *= (int)this.LayoutRoot.ActualHeight / this._Kinect.ColorStream.FrameHeight;
 
-            return new Point(point.X, point.Y);
-        }
+        //    return new Point(point.X, point.Y);
+        //}
+        //#endregion DrawHelp
 
         #endregion Helper Methods
 
@@ -362,7 +388,16 @@ namespace NewTreadmillAngleSpeedAB
                     {
                         if (this._Kinect.Status == KinectStatus.Connected)
                         {
-                            this._Kinect.SkeletonStream.Enable();
+                            TransformSmoothParameters smoothingParam = new TransformSmoothParameters();
+                            {
+                                smoothingParam.Smoothing = 0.5f;
+                                smoothingParam.Correction = 0.1f;
+                                smoothingParam.Prediction = 0.5f;
+                                smoothingParam.JitterRadius = 0.1f;
+                                smoothingParam.MaxDeviationRadius = 0.1f;
+                            };
+
+                            this._Kinect.SkeletonStream.Enable(smoothingParam);                                                                                                                                          
                             this._Kinect.ColorStream.Enable();
                             this._CurrentFrameSkeletons = new Skeleton[this._Kinect.SkeletonStream.FrameSkeletonArrayLength];
                             this._Kinect.SkeletonFrameReady += Kinect_SkeletonFrameReady;
