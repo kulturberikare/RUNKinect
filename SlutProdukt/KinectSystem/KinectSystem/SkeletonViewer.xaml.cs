@@ -142,7 +142,29 @@ namespace KinectSystem
                                         {
                                             Array.Sort(speedArray);
                                             // Gör om medelvärdet till km/h
-                                            meanSpeed = Math.Round(SortedArrayMean(speedArray) * 3.6, 1);
+                                            meanSpeed = SortedArrayMean(speedArray) * 3.6;
+
+                                            //if (meanSpeed < 5)
+                                            //{
+                                            //    meanSpeed *= 1.06;
+                                            //}
+                                            //else if (meanSpeed >= 5 && meanSpeed < 10)
+                                            //{
+                                            //    meanSpeed *= 1.1;
+                                            //}
+                                            //else if (meanSpeed >= 10)
+                                            //{
+                                            //    meanSpeed *= 1.22;
+                                            //}
+
+                                            meanSpeed = Math.Round(meanSpeed, 1);
+
+                                            using (System.IO.StreamWriter file = new System.IO.StreamWriter
+                                                   (@"C:\Users\Kandidat\Documents\GitHub\RUNKinect\SlutProdukt\KinectSystem\DefaultSpeed8.txt", true))
+                                            {
+                                                file.WriteLine(meanSpeed.ToString());
+                                                file.Close();
+                                            }
 
                                             Array.Sort(angleArray);
                                             meanAngle = Math.Round(SortedArrayMean(angleArray), 1);

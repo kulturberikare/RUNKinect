@@ -286,7 +286,7 @@ namespace KinectSystem
             }
         }
 
-        //SAmma som ovan fast för kamera 2
+        //Samma som ovan fast för kamera 2
         private void StartDepthImageTwo(object sender, RoutedEventArgs e)
         {
             if (!this.viewModel.IsDepthStreamEnabledTwo)
@@ -356,7 +356,7 @@ namespace KinectSystem
             this.viewModel.IsSkeletonStreamEnabledTwo = this.KinectSensorTwo.SkeletonStream.IsEnabled;
         }
 
-        //Eventhanterare som tar hand om det som händer när rutan för skeleton är urcheckad.
+        //Eventhanterare som tar hand om det som händer när rutan för skeleton är uncheckad.
         //gäller kamera 2
         private void Skeleton2_UnChecked(object sender, RoutedEventArgs e)
         {
@@ -365,6 +365,22 @@ namespace KinectSystem
             SkeletonViewerTwoElement.SkeletonsPanelTwo.Children.Clear();
         }
 
+        private void Camera1_Click(object sender, RoutedEventArgs e)
+        {
+            ImageBig.Source = this._ImageOne;
+        }
+
+        private void Camera2_Click(object sender, RoutedEventArgs e)
+        {
+            ImageBig.Source = this._ImageTwo;
+        }
+
+        private void SkeletonBig_Click(object sender, RoutedEventArgs e)
+        {
+            this._KinectSensorOne.SkeletonStream.Enable(); //Startar strömmen
+            SkeletonViewerElementBig.KinectSensorOne = this.KinectSensorOne;
+            this.KinectSensorOne.SkeletonFrameReady += SkeletonUpdate;
+        }
         //Funktion som initialiserar kinectsensor ett. 
         private void InitializeKinectSensorOne(KinectSensor sensor)
         {
@@ -609,20 +625,6 @@ namespace KinectSystem
             }
         }
 
-        private void BrowseButton2_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog Info2 = new OpenFileDialog();
-            Info2.InitialDirectory = "c:\\";
-            Info2.Filter = "(*.txt)|*.txt|(*.png)|*.png|(*.jpg)|*.jpg";
-            Info2.RestoreDirectory = true;
-
-            if (Info2.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                string file = Info2.FileName;
-                InfoLabel2.Content = file;
-            }
-        }
-
         //Eventhanterare som tar hand om logiken bakom "öka vinkeln" knappen för kamera 1
         //Om inte ElevationAngle är max ökas det med en.
         private void AngleUpOne(object sender, RoutedEventArgs e)
@@ -679,6 +681,7 @@ namespace KinectSystem
             this.viewModel.Speed = SkeletonViewerElement.meanSpeed;
             this.viewModel.Incline = SkeletonViewerElement.meanAngle;
         }
+
         #endregion Methods
 
         #region Properties
@@ -705,10 +708,10 @@ namespace KinectSystem
                     TransformSmoothParameters smoothingParam = new TransformSmoothParameters();
                     {
                         smoothingParam.Smoothing = 0.5f;
-                        smoothingParam.Correction = 0.1f;
+                        smoothingParam.Correction = 0.5f;
                         smoothingParam.Prediction = 0.5f;
-                        smoothingParam.JitterRadius = 0.1f;
-                        smoothingParam.MaxDeviationRadius = 0.1f;
+                        smoothingParam.JitterRadius = 0.05f;
+                        smoothingParam.MaxDeviationRadius = 0.04f;
                     };
 
                     this._KinectSensorOne.SkeletonStream.Enable(smoothingParam);
@@ -754,7 +757,7 @@ namespace KinectSystem
                 {
                     modelPoints[i] = CreateTriangleModel(new Point3D(posX, posY, posZ), new Point3D(posX, posY + 2, posZ), new Point3D(posX + 2, posY + 2, posZ));
                     modelPoints[i].Transform = new TranslateTransform3D(0, 0, 0);
-                    SkeletonModelGroup.Children.Add(modelPoints[i]);
+                    //SkeletonModelGroup.Children.Add(modelPoints[i]);
                     i++;
                 }
             }

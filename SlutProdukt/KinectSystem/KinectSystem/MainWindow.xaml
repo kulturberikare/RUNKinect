@@ -40,31 +40,22 @@
             <Label Foreground="Black" FontSize="30" FontFamily="Arial Black" 
         		Content="RunKinect" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-70,0,0"/>
         </StackPanel>
-        <GroupBox x:Name="ImageIn3D" Header="Camera in 3D" Background="Cornsilk" Grid.Row="2" Grid.Column="1"
+        <GroupBox x:Name="ImageIn3D" Header="Bigscreen" Background="Cornsilk" Grid.Row="2" Grid.Column="1"
                     Grid.RowSpan="4">
-            <Viewport3D x:Name="viewPort" Width="400" Height="400" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <ModelVisual3D x:Name="SkeletonModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="SkeletonModelGroup">
-                            <AmbientLight Color="Gray"/>
-                            <DirectionalLight Color="Gray" Direction="-1, -3, -2"/>
-                            <DirectionalLight Color="AliceBlue" Direction="1, -2, 3"/>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-                <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name="SkeletonCamera" FarPlaneDistance="5000" NearPlaneDistance="100"
-                                       LookDirection="0,0,1" UpDirection="0,-1,0" Position="120,110,-1000" FieldOfView="10" />
-                </Viewport3D.Camera>
-            </Viewport3D>
+            <Viewbox>
+                <Grid x:Name="LayoutRootBig" >
+                    <Image x:Name="ImageBig" />
+                    <c:SkeletonViewer x:Name="SkeletonViewerElementBig"/>
+                </Grid>
+            </Viewbox>
         </GroupBox>
         <Grid Grid.Row="2" Grid.Column="0">
             <GroupBox x:Name="Camera1" Header="Camera 1" Background="AntiqueWhite" Grid.Row="2" Grid.Column="0">
                 <Viewbox>
-                        <Grid x:Name="LayoutRootOne" >
-                            <Image x:Name="SightImageOne" />
-                            <c:SkeletonViewer x:Name="SkeletonViewerElement"/>
-                        </Grid>
+                    <Grid x:Name="LayoutRootOne" >
+                        <Image x:Name="SightImageOne" />
+                        <c:SkeletonViewer x:Name="SkeletonViewerElement"/>
+                    </Grid>
                 </Viewbox>
             </GroupBox>
         </Grid>
@@ -98,16 +89,14 @@
                 </chartingToolkit:Chart>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Buttons for 3D" Background="WhiteSmoke" Grid.Row="6" Grid.Column="1">
-            <StackPanel x:Name="Button3D" Grid.Row="5" Grid.Column="1" >
-                <Button x:Name="Back" Content="Back" Background="AliceBlue" Height="24" Margin="3,3,0,0" Width="55"
-                    VerticalAlignment="Top" HorizontalAlignment="Left" />
-                <Button x:Name="Play" Content="Play" Background="AliceBlue" Height="24" Margin="63,-24,0,0" Width="55" 
-                    VerticalAlignment="Top" HorizontalAlignment="Left" />
-                <Button x:Name="Forward" Content="Forward" Background="AliceBlue" Height="24" Margin="123,-24,0,0" Width="55" 
-                    HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                <Button x:Name="Record" Content="Rec" Background="AliceBlue" Height="24" Margin="183,-24,0,0" Width="55"
-                    HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <GroupBox Header="Buttons for Bigscreen" Background="WhiteSmoke" Grid.Row="6" Grid.Column="1">
+            <StackPanel x:Name="ButtonBig" Grid.Row="5" Grid.Column="1" >
+                <Button x:Name="CameraOne" Content="Camera1" Background="AliceBlue" Height="24" Margin="3,3,0,0" Width="55"
+                    VerticalAlignment="Top" HorizontalAlignment="Left" Click="Camera1_Click" IsEnabled="True"/>
+                <Button x:Name="CameraTwo" Content="Camera2" Background="AliceBlue" Height="24" Margin="63,-24,0,0" Width="55" 
+                    VerticalAlignment="Top" HorizontalAlignment="Left" Click="Camera2_Click"/>
+                <Button x:Name="SkeletonBig" Content="Skeleton" Background="AliceBlue" Height="24" Margin="123,-24,0,0" Width="55" 
+                    HorizontalAlignment="Left" VerticalAlignment="Top" Click="SkeletonBig_Click"/>
             </StackPanel>
         </GroupBox>
         <GroupBox Header="Buttons for camera 1" Background="Wheat" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" >
@@ -207,45 +196,37 @@
                     <ColumnDefinition Width="190"/>
                     <ColumnDefinition Width="190"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Angle Hip:" Grid.Row="0" Grid.Column="0" Margin="2,0,2,0"/>
-                <TextBlock Text="{Binding AngleHip}" Grid.Row="0" Grid.Column="1" />
-                <TextBlock Text="Angle Right Knee:" Grid.Row="1" Grid.Column="0" Margin="2,0,2,0" />
-                <TextBlock Text="{Binding AngleRKnee}" Grid.Row="1" Grid.Column="1"/>
-                <TextBlock Text="Angle Right Ankle:" Grid.Row="2" Grid.Column="0" Margin="2,0,2,0" />
-                <TextBlock Text="{Binding AngleRAnkle}" Grid.Row="2" Grid.Column="1"/>
-                <TextBlock Text="Angle Left Knee" Grid.Row="3" Grid.Column="0" Margin="2,0,2,0" />
-                <TextBlock Text="{Binding AngleLKnee}" Grid.Row="3" Grid.Column="1"/>
-                <TextBlock Text="Angle Left Ankle:" Grid.Row="4" Grid.Column="0" Margin="2,0,2,0" />
-                <TextBlock Text="{Binding AngleLAnkle}" Grid.Row="4" Grid.Column="1" />
+                <TextBlock FontSize="15" Text="Angle Hip:" Grid.Row="0" Grid.Column="0" Margin="2,0,2,0"/>
+                <TextBlock FontSize="15" Text="{Binding AngleHip}" Grid.Row="0" Grid.Column="1" />
+                <TextBlock FontSize="15" Text="Angle Right Knee:" Grid.Row="1" Grid.Column="0" Margin="2,0,2,0" />
+                <TextBlock FontSize="15" Text="{Binding AngleRKnee}" Grid.Row="1" Grid.Column="1"/>
+                <TextBlock FontSize="15" Text="Angle Right Ankle:" Grid.Row="2" Grid.Column="0" Margin="2,0,2,0" />
+                <TextBlock FontSize="15" Text="{Binding AngleRAnkle}" Grid.Row="2" Grid.Column="1"/>
+                <TextBlock FontSize="15" Text="Angle Left Knee" Grid.Row="3" Grid.Column="0" Margin="2,0,2,0" />
+                <TextBlock FontSize="15" Text="{Binding AngleLKnee}" Grid.Row="3" Grid.Column="1"/>
+                <TextBlock FontSize="15" Text="Angle Left Ankle:" Grid.Row="4" Grid.Column="0" Margin="2,0,2,0" />
+                <TextBlock FontSize="15" Text="{Binding AngleLAnkle}" Grid.Row="4" Grid.Column="1" />
             </Grid>
         </GroupBox>
         <GroupBox x:Name="Infoset1" Header="Search Joint Angles" Background="LightBlue" Grid.Row="4" Grid.Column="3">
             <StackPanel >
-                <Label Name="InfoLabel1" Content="Joint Angle file" Background="Wheat" Width="250" Height="30" HorizontalAlignment="Left" 
+                <Label Name="InfoLabel1" Content="Joint Angle file" Background="Wheat" Width="270" Height="30" HorizontalAlignment="Left" 
                    Margin="3,3,0,0"/>
                 <Button Name="BrowseButton1" Content="Browse" Width="90" Height="30" HorizontalAlignment="Right"
                     Margin="0,-30,10,0" Click="BrowseButton1_Click" />
             </StackPanel>
         </GroupBox>
-        <Grid Grid.Column="4" Grid.Row="5">
+        <Grid Grid.Column="4" Grid.Row="5" Grid.RowSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="190" />
                     <ColumnDefinition Width="190"/>
                 </Grid.ColumnDefinitions>
             <GroupBox Grid.Column="0" Header="Speed" Background="AliceBlue">
-                <TextBlock Text="{Binding Speed}"/>
+                <TextBlock TextAlignment="Center" Margin="0,30,0,30" FontSize="50" Text="{Binding Speed}"/>
             </GroupBox>
             <GroupBox Grid.Column="1" Header="Incline" Background="Azure">
-                <TextBlock Text="{Binding Incline}" />
+                <TextBlock TextAlignment="Center" Margin="0,30,0,30" FontSize="50" Text="{Binding Incline}" />
             </GroupBox>
         </Grid>
-        <GroupBox x:Name="Infoset2" Header="Search information 2" Background="LightBlue" Grid.Row="6" Grid.Column="3">
-            <StackPanel >
-                <Label Name="InfoLabel2" Content="Information file 2" Background="Wheat" Width="250" Height="30" HorizontalAlignment="Left" 
-                   Margin="3,3,0,0"/>
-                <Button Name="BrowseButton2" Content="Browse" Width="90" Height="30" HorizontalAlignment="Right"
-                    Margin="0,-30,10,0" Click="BrowseButton2_Click" />
-            </StackPanel>
-        </GroupBox>
     </Grid>
 </Window>
