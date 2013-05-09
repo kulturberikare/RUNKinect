@@ -37,6 +37,7 @@ namespace KinectSystem
         public double AngleLA = 0;
         public double AngleH = 0;
 
+        //Medlemsvariablar för beräkning av hastighet och vinkeln på löpbandet 
         private Joint prevRightFoot = new Joint();
         private Joint prevLeftFoot = new Joint();
         private Joint startPoint = new Joint();
@@ -63,7 +64,7 @@ namespace KinectSystem
         #endregion Constructor
 
         #region Methods
-        //Eventhanterare
+        //Eventhanterare för utritning skeletet 
         public void Kinect_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             SkeletonsPanel.Children.Clear();
@@ -143,20 +144,6 @@ namespace KinectSystem
                                             Array.Sort(speedArray);
                                             // Gör om medelvärdet till km/h
                                             meanSpeed = SortedArrayMean(speedArray) * 3.6;
-
-                                            //if (meanSpeed < 5)
-                                            //{
-                                            //    meanSpeed *= 1.06;
-                                            //}
-                                            //else if (meanSpeed >= 5 && meanSpeed < 10)
-                                            //{
-                                            //    meanSpeed *= 1.1;
-                                            //}
-                                            //else if (meanSpeed >= 10)
-                                            //{
-                                            //    meanSpeed *= 1.22;
-                                            //}
-
                                             meanSpeed = Math.Round(meanSpeed, 1);
 
                                             using (System.IO.StreamWriter file = new System.IO.StreamWriter
@@ -171,9 +158,6 @@ namespace KinectSystem
                                             index = 0;
                                         }
 
-                                        //SpeedText.Text = String.Format("{0} km/h", meanSpeed);
-                                        //AngleText.Text = String.Format("{1} degrees", meanAngle);
-
                                         startTime = 0; // Nu är vi klara med StartTime. Förbereder för nästa mätning.
                                         readyToStart = true;
                                     }
@@ -181,13 +165,6 @@ namespace KinectSystem
                                     // Spara positioner för att kunna jämföra med nästa frame.
                                     prevRightFoot = rightFoot;
                                     prevLeftFoot = leftFoot;
-
-                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.HandLeft], this._SkeletonBrushes[i]);
-                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.HandRight], this._SkeletonBrushes[i]);
-                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.HipLeft], this._SkeletonBrushes[i]);
-                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.HipRight], this._SkeletonBrushes[i]);
-                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.KneeLeft], this._SkeletonBrushes[i]);
-                                    TrackJoint(this._FrameSkeletons[i].Joints[JointType.KneeRight], this._SkeletonBrushes[i]);
                                 }
                             }
                         }
@@ -206,7 +183,7 @@ namespace KinectSystem
                 Polyline figure = CreateFigure(skeleton, brush, new[] { JointType.Head, JointType.ShoulderCenter, JointType.ShoulderLeft, JointType.Spine,
                                                                              JointType.ShoulderRight, JointType.ShoulderCenter, JointType.HipCenter});
                 SkeletonsPanel.Children.Add(figure);
-
+                //Ritar höften
                 figure = CreateFigure(skeleton, brush, new[] { JointType.HipLeft, JointType.HipRight });
                 SkeletonsPanel.Children.Add(figure);
 
@@ -275,7 +252,7 @@ namespace KinectSystem
             }
             return sum / (array.Length - 4);
         }
-
+        //Funktion för att följa en led
         private void TrackJoint(Joint joint, Brush brush)
         {
             if (joint.TrackingState != JointTrackingState.NotTracked)
@@ -284,6 +261,7 @@ namespace KinectSystem
             }
         }
 
+        //Funktion för ritningen av skelett
         private Polyline CreateFigure(Skeleton skeleton, Brush brush, JointType[] joints)
         {
             Polyline figure = new Polyline();

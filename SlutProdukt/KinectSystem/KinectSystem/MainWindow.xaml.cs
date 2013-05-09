@@ -50,11 +50,6 @@ namespace KinectSystem
 
         private MainWindowViewModel viewModel;
 
-        //Djup expriment
-        int pixelHeight = 240;
-        int pixelWidth = 320;
-        private GeometryModel3D[] modelPoints = new GeometryModel3D[240 * 320];
-        private GeometryModel3D geometryModel;
         #endregion Member Variables
 
         #region Constructor
@@ -78,7 +73,7 @@ namespace KinectSystem
         #endregion Constructor
 
         #region Methods
-        //Eventhanterare som 
+        //Eventhanterare som stänger av kamerorna när huvudfönstret stängs
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             if (KinectSensorOne != null && KinectSensorOne.IsRunning)
@@ -118,8 +113,6 @@ namespace KinectSystem
             }
 
             SetKinectData();
-            //Djup Exprimentet i 3D
-            SetData();
         }
 
         //Eventhanterare som tar hand om event gällande statusförändingar hos en kinectsensor.
@@ -364,23 +357,24 @@ namespace KinectSystem
             this.viewModel.IsSkeletonStreamEnabledTwo = this.KinectSensorTwo.SkeletonStream.IsEnabled;
             SkeletonViewerTwoElement.SkeletonsPanelTwo.Children.Clear();
         }
-
+        // För över bilden från kamera ett till den stora bilden
         private void Camera1_Click(object sender, RoutedEventArgs e)
         {
             ImageBig.Source = this._ImageOne;
         }
-
+        // För över bilden från kamera två till den stora bilden
         private void Camera2_Click(object sender, RoutedEventArgs e)
         {
             ImageBig.Source = this._ImageTwo;
         }
-
+        // Ritar ut skelett på den stora bilden
         private void SkeletonBig_Click(object sender, RoutedEventArgs e)
         {
             this._KinectSensorOne.SkeletonStream.Enable(); //Startar strömmen
             SkeletonViewerElementBig.KinectSensorOne = this.KinectSensorOne;
             this.KinectSensorOne.SkeletonFrameReady += SkeletonUpdate;
         }
+
         //Funktion som initialiserar kinectsensor ett. 
         private void InitializeKinectSensorOne(KinectSensor sensor)
         {
@@ -389,6 +383,52 @@ namespace KinectSystem
                 SightImageOne.Source = this._ImageOne;
                 deletePrevFiles(); //Plockar bort textfiler med vinklar från tidigare körningar.
                 sensor.Start();
+            }
+        }
+
+        //Initierar kinectSensor två
+        private void InitializeKinectSensorTwo(KinectSensor sensor)
+        {
+            if (sensor != null)
+            {
+                SightImageTwo.Source = this._ImageTwo;
+                sensor.Start();
+            }
+        }
+
+        //Avintitialiserar kinectsensor ett.
+        private void UninitializeKinectSensorOne(KinectSensor sensor)
+        {
+            if (sensor != null)
+            {
+                sensor.Stop();
+                if (this.viewModel.IsColorStreamEnabledOne)
+                {
+                    StopColorImageOne(sensor);
+                }
+
+                if (this.viewModel.IsDepthStreamEnabledOne)
+                {
+                    sensor.DepthFrameReady -= Kinect_DepthFrameReadyOne;
+                }
+            }
+        }
+
+        //Avinitialiserar kinectsensor två
+        private void UninitializeKinectSensorTwo(KinectSensor sensor)
+        {
+            if (sensor != null)
+            {
+                sensor.Stop();
+                if (this.viewModel.IsColorStreamEnabledTwo)
+                {
+                    sensor.ColorFrameReady -= Kinect_ColorFrameReadyTwo;
+                }
+
+                if (this.viewModel.IsDepthStreamEnabledOne)
+                {
+                    sensor.DepthFrameReady -= Kinect_DepthFrameReadyTwo;
+                }
             }
         }
 
@@ -423,53 +463,7 @@ namespace KinectSystem
             }
         }
 
-        //Initierar kinectSensor 2
-        private void InitializeKinectSensorTwo(KinectSensor sensor)
-        {
-            if (sensor != null)
-            {
-                SightImageTwo.Source = this._ImageTwo;
-                sensor.Start();
-            }
-        }
-
-        //Avintitialiserar kinectsensor 2.
-        private void UninitializeKinectSensorOne(KinectSensor sensor)
-        {
-            if (sensor != null)
-            {
-                sensor.Stop(); 
-                if (this.viewModel.IsColorStreamEnabledOne)
-                {
-                    StopColorImageOne(sensor);
-                }
-
-                if (this.viewModel.IsDepthStreamEnabledOne)
-                {
-                    sensor.DepthFrameReady -= Kinect_DepthFrameReadyOne;
-                }
-            }
-        }
-
-        //Avinitialiserar kinectsensor två
-        private void UninitializeKinectSensorTwo(KinectSensor sensor)
-        {
-            if (sensor != null)
-            {
-                sensor.Stop();
-                if (this.viewModel.IsColorStreamEnabledTwo)
-                {
-                    sensor.ColorFrameReady -= Kinect_ColorFrameReadyTwo;
-                }
-
-                if (this.viewModel.IsDepthStreamEnabledOne)
-                {
-                    sensor.DepthFrameReady -= Kinect_DepthFrameReadyTwo;
-                }
-            }
-        }
-
-        //Eventhanterare
+        //Eventhanterare för färgbild på bild ett
         private void Kinect_ColorFrameReadyOne(object sender, ColorImageFrameReadyEventArgs e)
         {
             using (ColorImageFrame frame = e.OpenColorImageFrame())
@@ -485,7 +479,7 @@ namespace KinectSystem
             }
         }
 
-        //Eventhanterare
+        //Eventhanterare för färgbild på bild två
         private void Kinect_ColorFrameReadyTwo(object sender, ColorImageFrameReadyEventArgs e)
         {
             using (ColorImageFrame frame = e.OpenColorImageFrame())
@@ -500,12 +494,11 @@ namespace KinectSystem
             }
         }
 
-        //Eventhanterare
+        //Eventhanterare för djupbild på bild ett
         private void Kinect_DepthFrameReadyOne(object sender, DepthImageFrameReadyEventArgs e)
         {
             using (DepthImageFrame frame = e.OpenDepthImageFrame())
             {
-                //Glöm ej att Lägga tillbaka den här!---------------------------------------------------
                 if (frame != null)
                 {
                     short[] pixelData = new short[frame.PixelDataLength];
@@ -513,31 +506,9 @@ namespace KinectSystem
                     this._ImageOne.WritePixels(this._ImageRectOne,
                                                    pixelData, this._ImageStrideOne, 0);
                 }
-
-
-                if (frame == null)
-                {
-                    return;
-                }
-                short[] pixelData1 = new short[frame.PixelDataLength];
-                frame.CopyPixelDataTo(pixelData1);
-                int translatePoint = 0;
-                for (int posY = 0; posY < frame.Height; posY += 2)
-                {
-                    for (int posX = 0; posX < frame.Width; posX += 2)
-                    {
-                        int depth = ((ushort)pixelData1[posX + posY * frame.Width]) >> 3;
-                        if (depth == KinectSensorOne.DepthStream.UnknownDepth)
-                        {
-                            continue;
-                        }
-                        ((TranslateTransform3D)modelPoints[translatePoint].Transform).OffsetZ = depth;
-                        translatePoint++;
-                    }
-                }
             }
         }
-
+        //Eventhanterare för djupbild på bild två
         private void Kinect_DepthFrameReadyTwo(object sender, DepthImageFrameReadyEventArgs e)
         {
             using (DepthImageFrame frame = e.OpenDepthImageFrame())
@@ -564,6 +535,7 @@ namespace KinectSystem
             //Tar bort tidigare filens värden från valueList
             valueList.Clear();
 
+            // Om vi hittar en fil skrivs namn och sökväg ut i rutan och sedan läser vi in tecken från filen 
             if (Info1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string file = Info1.FileName;
@@ -620,8 +592,8 @@ namespace KinectSystem
 
             catch
             {
-                //Borde kanske vara något annat vettigare.
-                System.Windows.MessageBox.Show("FEL");
+                //Ett fel har kastats och det skrivs ut en messagebox som säger fel 
+                System.Windows.MessageBox.Show("Ett fel har uppstått vid inläsningen ur valda filen");
             }
         }
 
@@ -714,7 +686,7 @@ namespace KinectSystem
                         smoothingParam.MaxDeviationRadius = 0.04f;
                     };
 
-                    this._KinectSensorOne.SkeletonStream.Enable(smoothingParam);
+                    //this._KinectSensorOne.SkeletonStream.Enable(smoothingParam);
                 }
             }
         }
@@ -744,38 +716,5 @@ namespace KinectSystem
             }
         }
         #endregion Properties
-
-        //Kom ihåg att fixa tillbaka depthframe event handlern + konstruktorn + Member variables!!!
-        #region Test 3D Depth
-        private void SetData()
-        {
-            int i = 0;
-            int posZ = 0;
-            for (int posY = 0; posY < pixelHeight; posY += 2)
-            {
-                for (int posX = 0; posX < pixelWidth; posX += 2)
-                {
-                    modelPoints[i] = CreateTriangleModel(new Point3D(posX, posY, posZ), new Point3D(posX, posY + 2, posZ), new Point3D(posX + 2, posY + 2, posZ));
-                    modelPoints[i].Transform = new TranslateTransform3D(0, 0, 0);
-                    //SkeletonModelGroup.Children.Add(modelPoints[i]);
-                    i++;
-                }
-            }
-        }
-
-        private GeometryModel3D CreateTriangleModel(Point3D p0, Point3D p1, Point3D p2)
-        {
-            MeshGeometry3D mesh = new MeshGeometry3D();
-            mesh.Positions.Add(p0);
-            mesh.Positions.Add(p1);
-            mesh.Positions.Add(p2);
-            mesh.TriangleIndices.Add(0);
-            mesh.TriangleIndices.Add(1);
-            mesh.TriangleIndices.Add(2);
-            Material material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
-            geometryModel = new GeometryModel3D(mesh, material);
-            return geometryModel;
-        }
-        #endregion Test 3D Depth
     }
 }

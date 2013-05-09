@@ -39,7 +39,7 @@ namespace KinectSystem
         #endregion Constructor
 
         #region Methods
-
+        //Eventhanterare för andra skeletet
         public void Kinect_SkeletonFrameReadyTwo(object sender, SkeletonFrameReadyEventArgs e)
         {
             SkeletonsPanelTwo.Children.Clear();
@@ -76,27 +76,28 @@ namespace KinectSystem
         {
             if (skeleton != null && skeleton.TrackingState == SkeletonTrackingState.Tracked)
             {
-                //Draw head and torso
+                //Draw head and torso på skelett två
                 Polyline figure = CreateFigure(skeleton, brush, new[] { JointType.Head, JointType.ShoulderCenter, JointType.ShoulderLeft, JointType.Spine,
                                                                              JointType.ShoulderRight, JointType.ShoulderCenter, JointType.HipCenter});
                 SkeletonsPanelTwo.Children.Add(figure);
 
+                //Ritar ut höften på skelett två
                 figure = CreateFigure(skeleton, brush, new[] { JointType.HipLeft, JointType.HipRight });
                 SkeletonsPanelTwo.Children.Add(figure);
 
-                //Draw left leg
+                //Draw left leg på skelett två
                 figure = CreateFigure(skeleton, brush, new[] { JointType.HipCenter, JointType.HipLeft, JointType.KneeLeft, JointType.AnkleLeft, JointType.FootLeft });
                 SkeletonsPanelTwo.Children.Add(figure);
 
-                //Draw right leg
+                //Draw right leg på skelett två
                 figure = CreateFigure(skeleton, brush, new[] { JointType.HipCenter, JointType.HipRight, JointType.KneeRight, JointType.AnkleRight, JointType.FootRight });
                 SkeletonsPanelTwo.Children.Add(figure);
 
-                //Draw left arm
+                //Draw left arm på skelett två
                 figure = CreateFigure(skeleton, brush, new[] { JointType.ShoulderLeft, JointType.ElbowLeft, JointType.WristLeft, JointType.HandLeft });
                 SkeletonsPanelTwo.Children.Add(figure);
 
-                //Draw right arm
+                //Draw right arm på skelett två
                 figure = CreateFigure(skeleton, brush, new[] { JointType.ShoulderRight, JointType.ElbowRight, JointType.WristRight, JointType.HandRight });
                 SkeletonsPanelTwo.Children.Add(figure);
 
@@ -104,6 +105,7 @@ namespace KinectSystem
             }
         }
 
+        //Funktion för att följa en led
         private void TrackJoint(Joint joint, Brush brush)
         {
             if (joint.TrackingState != JointTrackingState.NotTracked)
@@ -112,6 +114,7 @@ namespace KinectSystem
             }
         }
 
+        //funktion för att rita skelett
         private Polyline CreateFigure(Skeleton skeleton, Brush brush, JointType[] joints)
         {
             Polyline figure = new Polyline();
@@ -127,6 +130,7 @@ namespace KinectSystem
             return figure;
         }
 
+        //Funktion för att få position av en led
         private Point GetJointPoint(Joint joint)
         {
 

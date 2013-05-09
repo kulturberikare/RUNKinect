@@ -222,10 +222,10 @@
                     <ColumnDefinition Width="190"/>
                 </Grid.ColumnDefinitions>
             <GroupBox Grid.Column="0" Header="Speed" Background="AliceBlue">
-                <TextBlock TextAlignment="Center" Margin="0,30,0,30" FontSize="50" Text="{Binding Speed}"/>
+                <TextBlock TextAlignment="Center" Margin="0,50,0,10" FontSize="50" Text="{Binding Speed}"/>
             </GroupBox>
             <GroupBox Grid.Column="1" Header="Incline" Background="Azure">
-                <TextBlock TextAlignment="Center" Margin="0,30,0,30" FontSize="50" Text="{Binding Incline}" />
+                <TextBlock TextAlignment="Center" Margin="0,50,0,10" FontSize="50" Text="{Binding Incline}" />
             </GroupBox>
         </Grid>
     </Grid>
