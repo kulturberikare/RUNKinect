@@ -1,4 +1,7 @@
-﻿using System;
+﻿/* Koden nedan är autogenererad av Visual Studio,
+   innehåller nödvändiga metoder för att initiera grafik */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
