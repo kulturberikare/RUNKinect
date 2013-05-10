@@ -64,7 +64,7 @@ namespace KinectSystem
         #endregion Constructor
 
         #region Methods
-        //Eventhanterare för utritning skeletet 
+        //Eventhanterare för utritning skeletet. Har även logik för att hitta hastighet i löpbandet.
         public void Kinect_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             SkeletonsPanel.Children.Clear();
@@ -87,6 +87,7 @@ namespace KinectSystem
                                 currentskeleton = this._FrameSkeletons[i];
                                 if (currentskeleton.TrackingState == SkeletonTrackingState.Tracked)
                                 {
+                                    //Hastighet i löpband
                                     Joint rightFoot = currentskeleton.Joints[JointType.FootRight];
                                     Joint leftFoot = currentskeleton.Joints[JointType.FootLeft];
 
@@ -367,6 +368,7 @@ namespace KinectSystem
         //Skriver vinkeln i höger knä till en textfil som heter RightKnee
         private void WriterRK(double angle)
         {
+            //Skapar fil om den inte redan finns
             if (!File.Exists("RightKnee.txt"))
             {
                 StreamWriter file = new StreamWriter("RightKnee.txt");
